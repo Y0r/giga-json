@@ -1,0 +1,37 @@
+# IDE files
+.vscode/*
+.idea
+
+# Env files
+.env
+
+# Packages and logs
+/node_modules
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Build artifacts
+dist/
+build/
+
+# Temp. files
+/tmp
+/out-tsc
+
+# Packages
+*.7z
+*.dmg
+*.gz
+*.bz2
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+*.tgz
+*.bak
+
+# OS generated files #
+.DS_Store*
+ehthumbs.db
