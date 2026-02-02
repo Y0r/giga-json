@@ -1,0 +1,17 @@
+{
+  "name": "giga-json",
+  "version": "1.0.0",
+  "description": "Browser-based JSON editor designed to feel like a lightweight IDE rather than a basic formatting tool.",
+  "main": "dist/index.js",
+  "scripts": {
+    "run": "vite",
+    "build": "vite build"
+  },
+  "devDependencies": {
+    "@types/node": "^25.1.0",
+    "prettier": "3.8.1",
+    "typescript": "^5.9.3",
+    "vite": "^6.4.1"
+  },
+  "private": true
+}
