@@ -4,7 +4,7 @@
   "description": "Browser-based JSON editor designed to feel like a lightweight IDE rather than a basic formatting tool.",
   "main": "dist/index.js",
   "scripts": {
-    "run": "vite",
+    "dev": "vite",
     "build": "vite build",
     "prepare": "husky"
   },
