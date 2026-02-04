@@ -3,6 +3,7 @@ import path from "path";
 
 export default defineConfig({
   root: "src",
+  envDir: "..",
   build: {
     outDir: "../dist",
     emptyOutDir: true,
@@ -23,9 +24,5 @@ export default defineConfig({
       // Optional alias for cleaner imports.
       "@": path.resolve(__dirname, "src"),
     },
-  },
-  define: {
-    // Inject environment variables.
-    "process.env.NODE_ENV": '"production"',
   },
 });
