@@ -11,6 +11,8 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@types/node": "^25.1.0",
+    "@types/react": "^19.2.13",
+    "@types/react-dom": "^19.2.3",
     "eslint": "^9.39.2",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
@@ -21,6 +23,7 @@
     "jiti": "^2.6.1",
     "lint-staged": "^16.2.7",
     "prettier": "3.8.1",
+    "react-dom": "^19.2.4",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0",
     "vite": "^6.4.1"
@@ -28,5 +31,8 @@
   "private": true,
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"
+  },
+  "dependencies": {
+    "react-error-boundary": "^6.1.0"
   }
 }
