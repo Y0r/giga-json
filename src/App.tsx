@@ -2,10 +2,10 @@ import React from "react";
 
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "@/components/ErrorFallback";
+import { StableLayout } from "@/containers/Layout/StableLayout";
 
 import logo from "@/assets/logo.svg";
 import { config } from "@/config";
-import { StableLayout } from "@/containers/Layout/StableLayout";
 
 export default function App() {
   return (
