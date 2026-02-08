@@ -5,6 +5,7 @@ import { ErrorFallback } from "@/components/ErrorFallback";
 
 import logo from "@/assets/logo.svg";
 import { config } from "@/config";
+import { StableLayout } from "@/containers/Layout/StableLayout";
 
 export default function App() {
   return (
@@ -17,10 +18,12 @@ export default function App() {
         console.log(error);
       }}
     >
-      <div style={{ display: "flex", alignItems: "center" }}>
-        <img src={logo} alt="Sycamore Tree" style={{ width: "32px" }}></img>
-        <h1>GSON</h1>
-      </div>
+      <StableLayout>
+        <div style={{ display: "flex", alignItems: "center" }}>
+          <img src={logo} alt="Sycamore Tree" style={{ width: "32px" }}></img>
+          <h1>GSON</h1>
+        </div>
+      </StableLayout>
     </ErrorBoundary>
   );
 }
