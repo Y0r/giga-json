@@ -3,8 +3,8 @@ import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { ErrorFallback } from "@/components/ErrorFallback";
 import { StableLayout } from "@/containers/Layout/StableLayout";
+import { IDE } from "@/containers/IDE";
 
-import logo from "@/assets/logo.svg";
 import { config } from "@/config";
 
 export default function App() {
@@ -18,11 +18,8 @@ export default function App() {
         console.log(error);
       }}
     >
-      <StableLayout>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <img src={logo} alt="Sycamore Tree" style={{ width: "32px" }}></img>
-          <h1>GSON</h1>
-        </div>
+      <StableLayout className={"base-layout"}>
+        <IDE />
       </StableLayout>
     </ErrorBoundary>
   );
