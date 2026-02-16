@@ -1,5 +1,5 @@
 import React from "react";
-import { Editor } from "@/containers/IDE/Editor/Editor";
+import { Editor } from "./Editor/Editor";
 
 interface IDEProps {}
 
