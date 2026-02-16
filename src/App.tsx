@@ -1,9 +1,9 @@
 import React from "react";
 
 import { ErrorBoundary } from "react-error-boundary";
-import { ErrorFallback } from "@/components/ErrorFallback";
-import { StableLayout } from "@/containers/Layout/StableLayout";
-import { IDE } from "@/containers/IDE";
+import { ErrorFallback } from "@/shared/ErrorFallback";
+import { StableLayout } from "@/shared/Layout/StableLayout";
+import { IDE } from "@/feature/ide/IDE";
 
 import { config } from "@/config";
 

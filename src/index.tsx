@@ -1,6 +1,6 @@
 import React from "react";
 import ReactDOM from "react-dom/client";
-import { Provider as ChakraProvider } from "@/components/ui/provider";
+import { Provider as ChakraProvider } from "@/shared/ui/provider";
 import App from "@/App";
 
 import "@/styles.css";
