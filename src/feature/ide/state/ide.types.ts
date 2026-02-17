@@ -10,10 +10,12 @@ export interface EditorFile {
   path: string;
   language: string;
   content: string;
+  // @todo use proper type.
   viewState?: unknown;
 
   // File state.
   isDeleted: boolean;
+  hasUnsavedChanges: boolean;
 }
 
 // Interface for the editor state.
