@@ -45,12 +45,14 @@ export const EditorTab = ({
     <Flex
       role={"tab"}
       tabIndex={0}
-      className={classNames("c-editor-tab", className)}
+      className={classNames(className, "c-editor-tab", {
+        "c-editor-tab__active": isActive,
+      })}
       direction={"row"}
       justify={"flex-start"}
       alignContent={"end"}
       alignItems={"end"}
-      gap={2}
+      gap={1}
       onClick={handleClick}
       onKeyDown={(event) => {
         if (event.key === "Enter") {

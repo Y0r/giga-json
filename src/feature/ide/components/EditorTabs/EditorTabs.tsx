@@ -54,6 +54,7 @@ export const EditorTabs = (props: EditorTabsProps) => {
                 direction={"row"}
                 justify={"flex-start"}
                 flexWrap={"nowrap"}
+                gap={1}
                 overflowX={"scroll"}
                 {...droppableProvider.droppableProps}
                 ref={droppableProvider.innerRef}
