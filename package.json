@@ -38,6 +38,7 @@
   "dependencies": {
     "@chakra-ui/react": "^3.32.0",
     "@emotion/react": "^11.14.0",
+    "@hello-pangea/dnd": "^18.0.1",
     "@monaco-editor/react": "^4.7.0",
     "classnames": "^2.5.1",
     "dockview-react": "^4.13.1",
