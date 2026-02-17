@@ -13,7 +13,6 @@ interface EditorTabProps {
   hasUnsavedChanges: boolean;
   onClick: () => void;
   onClose: () => void;
-  ref?: React.Ref<HTMLDivElement>;
 }
 
 /**
@@ -28,7 +27,6 @@ export const EditorTab = ({
   hasUnsavedChanges = false,
   onClick,
   onClose,
-  ref,
 }: EditorTabProps) => {
   /**
    * Simple handler to open the editor tab.
