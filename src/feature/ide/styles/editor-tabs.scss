@@ -1,0 +1,35 @@
+.c-editor-tabs {
+  /* Hide scrollbar for IE, Edge and Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none; /* Firefox */
+
+  /* Hide scrollbar for Chrome, Safari and Opera */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  .c-editor-tab {
+    width: fit-content;
+    cursor: pointer;
+    box-sizing: border-box;
+    border: 1px solid transparent;
+    padding: var(--chakra-spacing-1);
+    padding-top: 0;
+
+    .c-editor-tab__close {
+      visibility: hidden;
+      cursor: pointer;
+    }
+
+    &__active,
+    &:hover {
+      border: 1px solid var(--chakra-colors-gray-500);
+      border-radius: var(--chakra-radii-md);
+      background-color: var(--chakra-colors-gray-900);
+
+      .c-editor-tab__close {
+        visibility: visible;
+      }
+    }
+  }
+}

@@ -11,6 +11,8 @@ import { EditorFile } from "@/feature/ide/state/ide.types";
 
 import classNames from "classnames";
 
+import "@/feature/ide/styles/editor-tabs.scss";
+
 interface EditorTabsProps {
   className?: string;
 }
