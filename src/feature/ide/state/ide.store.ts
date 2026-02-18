@@ -6,8 +6,9 @@ export const useEditorStore = create<EditorState>()(
   persist(
     (set) => ({
       files: {},
-      activeFileIds: [],
       activeTabId: null,
+      activeFileIds: [],
+      latestClosedFileIds: [],
 
       // Create a new file in the editor state.
       createFile: (file: EditorFile) =>
@@ -20,11 +21,52 @@ export const useEditorStore = create<EditorState>()(
           activeTabId: file.id,
         })),
 
+      // Completely remove a file from the editor state.
+      deleteFile: (id: string) =>
+        set((state) => {
+          // Remove the file from the editor state.
+          const { [id]: _, ...remainingFiles } = state.files;
+
+          return {
+            files: remainingFiles,
+            activeFileIds: state.activeFileIds.filter(
+              (fileId) => fileId !== id,
+            ),
+            latestClosedFileIds: state.latestClosedFileIds.filter(
+              (fileId) => fileId !== id,
+            ),
+          };
+        }),
+
       // Open a file in the editor state.
-      openFile: (id: string) =>
+      openTab: (id: string) =>
         set((state) => ({
           activeTabId: id,
         })),
+
+      // Reopen a recently closed file.
+      reopenTab: (id: string) =>
+        set((state) => ({
+          activeTabId: id,
+          latestClosedFileIds: state.latestClosedFileIds.filter(
+            (fileId) => fileId !== id,
+          ),
+        })),
+
+      // Close a file in the editor state.
+      closeTab: (id: string) =>
+        set((state) => ({
+          files: {
+            ...state.files,
+            [id]: { ...state.files[id], isDeleted: true },
+          },
+          activeFileIds: state.activeFileIds.filter((fileId) => fileId !== id),
+          latestClosedFileIds: [...state.latestClosedFileIds, id],
+        })),
+
+      // Update all active file ids in the editor state.
+      updateTabs: (updatedActiveFileIds: string[]) =>
+        set((state) => ({ activeFileIds: updatedActiveFileIds })),
     }),
     { name: "editor-store" },
   ),

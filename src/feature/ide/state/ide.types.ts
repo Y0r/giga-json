@@ -14,7 +14,7 @@ export interface EditorFile {
   viewState?: unknown;
 
   // File state.
-  isDeleted: boolean;
+  isClosed: boolean;
   hasUnsavedChanges: boolean;
 }
 
@@ -22,6 +22,7 @@ export interface EditorFile {
 // Keeps track of all the files and their active states.
 export interface EditorState {
   files: Record<string, EditorFile>;
-  activeFileIds: string[];
   activeTabId: string | null;
+  activeFileIds: string[];
+  latestClosedFileIds: string[];
 }
