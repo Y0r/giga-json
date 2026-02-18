@@ -21,6 +21,7 @@
       cursor: pointer;
     }
 
+    // Show close icon on hover / for active tab.
     &__active,
     &:hover {
       border: 1px solid var(--chakra-colors-gray-500);
@@ -29,6 +30,13 @@
 
       .c-editor-tab__close {
         visibility: visible;
+
+        // Highlight closing icon background on hover.
+        &:hover {
+          svg {
+            background-color: var(--chakra-colors-gray-700);
+          }
+        }
       }
     }
   }

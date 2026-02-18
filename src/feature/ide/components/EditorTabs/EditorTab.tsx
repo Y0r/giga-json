@@ -6,13 +6,14 @@ import classNames from "classnames";
 
 interface EditorTabProps {
   className?: string;
+  fileId: string;
   fileName: string;
   icon: ReactNode | null;
   isActive: boolean;
   isCloseable: boolean;
   hasUnsavedChanges: boolean;
-  onClick: () => void;
-  onClose: () => void;
+  onClick: (fileId: string) => void;
+  onClose: (fileId: string) => void;
 }
 
 /**
@@ -20,6 +21,7 @@ interface EditorTabProps {
  */
 export const EditorTab = ({
   className,
+  fileId,
   fileName,
   icon,
   isActive,
@@ -30,24 +32,36 @@ export const EditorTab = ({
 }: EditorTabProps) => {
   /**
    * Simple handler to open the editor tab.
+   *
+   * @param {React.Event} event - The event object.
    */
   const handleClick = (event: React.MouseEvent | React.KeyboardEvent) => {
     event.stopPropagation();
-    onClick();
+    onClick(fileId);
   };
 
+  /**
+   * Simple handler to close the editor tab.
+   *
+   * @param {React.Event} event - The event object.
+   */
   const handleClose = (event: React.MouseEvent | React.KeyboardEvent) => {
     event.stopPropagation();
-    onClose();
+    onClose(fileId);
   };
 
   return (
     <Flex
       role={"tab"}
       tabIndex={0}
-      className={classNames(className, "c-editor-tab", {
-        "c-editor-tab__active": isActive,
-      })}
+      className={classNames(
+        className,
+        "c-editor-tab",
+        "c-editor-tab__id" + fileId,
+        {
+          "c-editor-tab__active": isActive,
+        },
+      )}
       direction={"row"}
       justify={"flex-start"}
       alignContent={"end"}
