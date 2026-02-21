@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useMemo } from "react";
 
 import { Flex } from "@chakra-ui/react";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
@@ -22,6 +22,7 @@ interface EditorTabsProps {
  * Editor tabs component for the IDE.
  */
 export const EditorTabs = (props: EditorTabsProps) => {
+  // Data retrieval.
   const activeFileIds = useEditorStore((state) => state.activeFileIds);
   const files = useEditorStore((state) => state.files);
   const activeTabId = useEditorStore((state) => state.activeTabId);
@@ -31,8 +32,11 @@ export const EditorTabs = (props: EditorTabsProps) => {
   const closeTab = useEditorStore((state) => state.closeTab);
   const updateTabs = useEditorStore((state) => state.updateTabs);
 
-  useEffect(() => {
-    setActiveFiles(activeFileIds.map((id) => files[id]).filter(Boolean));
+  // State to hold files data for tabs rendering.
+  const activeFiles = useMemo(() => {
+    return activeFileIds
+      .map((id) => files[id])
+      .filter((file) => file && !file.isClosed);
   }, [activeFileIds, files]);
 
   // @todo handle on store level?
