@@ -25,23 +25,68 @@ export const EditorTabs = (props: EditorTabsProps) => {
   const files = useEditorStore((state) => state.files);
   const activeTabId = useEditorStore((state) => state.activeTabId);
 
-  const [activeFiles, setActiveFiles] = React.useState<EditorFile[]>([]);
+  // Hooks for data manipulation.
+  const openTab = useEditorStore((state) => state.openTab);
+  const closeTab = useEditorStore((state) => state.closeTab);
+  const updateTabs = useEditorStore((state) => state.updateTabs);
 
   useEffect(() => {
     setActiveFiles(activeFileIds.map((id) => files[id]).filter(Boolean));
   }, [activeFileIds, files]);
 
-  console.log(activeFiles);
+  // @todo handle on store level?
+  useEffect(() => {
+    if (!activeTabId && activeFileIds.length > 0) {
+      openTab(activeFileIds[0]);
+    }
+  }, [activeTabId]);
 
-  const onDragEnd = (result: any) => {
-    console.log(result);
-    // @todo update active file ids.
+  /**
+   * Open tab handler.
+   *
+   * @param {string} id - The file id to open.
+   */
+  const handleOpen = (id: string) => {
+    openTab(id);
+  };
+
+  /**
+   * Close tab handler.
+   *
+   * @param {string} id - The file id to close.
+   *
+   * @todo show hint about restoring closed files.
+   */
+  const handleClose = (id: string) => {
+    closeTab(id);
+  };
+
+  /**
+   * Drag and drop handler for the editor tabs.
+   *
+   * @param result
+   */
+  const handleDrag = (result: any) => {
+    const { source, destination } = result;
+
+    // Skip processing if the user dropped the item back where it came from.
+    if (!destination) {
+      return;
+    }
+
+    const updatedActiveFileIds = arrayReorder(
+      activeFileIds,
+      source.index,
+      destination.index,
+    );
+
+    updateTabs(updatedActiveFileIds);
   };
 
   return (
     <>
-      {activeFiles && activeFiles.length && (
-        <DragDropContext onDragEnd={onDragEnd}>
+      {activeFiles && activeFiles.length > 0 && (
+        <DragDropContext onDragEnd={handleDrag}>
           <Droppable
             droppableId={"tabs"}
             isDropDisabled={false}
@@ -74,14 +119,15 @@ export const EditorTabs = (props: EditorTabsProps) => {
                         <EditorTab
                           key={index}
                           className={"c-editor-tab__index-" + index}
+                          fileId={file.id}
                           fileName={file.name}
                           // @todo diff icons per content type.
                           icon={<VscFile />}
                           isActive={file.id === activeTabId}
                           isCloseable={true}
                           hasUnsavedChanges={file.hasUnsavedChanges}
-                          onClick={() => {}}
-                          onClose={() => {}}
+                          onClick={handleOpen}
+                          onClose={handleClose}
                         />
                       </div>
                     )}
