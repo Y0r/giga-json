@@ -9,6 +9,7 @@ import EditorTab from "@/feature/ide/components/EditorTabs/EditorTab";
 import { useEditorStore } from "@/feature/ide/state/ide.store";
 import { EditorFile } from "@/feature/ide/state/ide.types";
 
+import { arrayReorder } from "@/feature/ide/utils/arrayReorder";
 import classNames from "classnames";
 
 import "@/feature/ide/styles/editor-tabs.scss";
