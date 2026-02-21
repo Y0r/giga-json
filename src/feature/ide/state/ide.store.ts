@@ -66,7 +66,11 @@ export const useEditorStore = create<EditorState>()(
 
       // Update all active file ids in the editor state.
       updateTabs: (updatedActiveFileIds: string[]) =>
-        set((state) => ({ activeFileIds: updatedActiveFileIds })),
+        set((state) => ({
+          // Destruct and create a new array to avoid mutating the original array.
+          // Otherwise, change will not propagate to other components.
+          activeFileIds: [...updatedActiveFileIds],
+        })),
     }),
     { name: "editor-store" },
   ),
