@@ -94,6 +94,8 @@ export const EditorTabs = (props: EditorTabsProps) => {
         <DragDropContext onDragEnd={handleDrag}>
           <Droppable
             droppableId={"tabs"}
+            // @todo make this configurable.
+            direction={"horizontal"}
             isDropDisabled={false}
             isCombineEnabled={false}
           >
@@ -111,9 +113,9 @@ export const EditorTabs = (props: EditorTabsProps) => {
               >
                 {activeFiles.map((file: EditorFile, index) => (
                   <Draggable
-                    draggableId={`tab-${file.id}`}
                     index={index}
-                    key={index}
+                    key={file.id}
+                    draggableId={`tab-${file.id}`}
                   >
                     {(draggableProvider) => (
                       <div
