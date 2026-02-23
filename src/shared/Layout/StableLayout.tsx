@@ -4,7 +4,7 @@ import classNames from "classnames";
 
 type StableLayoutProps = {
   className?: string;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 } & Omit<BoxProps, "className" | "children">;
 
 /**
@@ -12,10 +12,10 @@ type StableLayoutProps = {
  *
  * The key feature of this layout is its ability to maintain a consistent layout across different screen sizes and orientations.
  *
- * @param {string} className - Additional CSS class names to apply to the layout container.
- * @param {React.ReactNode} children - The content to be rendered within the layout.
- * @param {array} props - Additional props to be passed to the Box component.
- * @constructor
+ * @param {object} data - The component props.
+ * @param {string} data.className - Additional CSS class names to apply to the layout container.
+ * @param {React.ReactNode} data.children - The content to be rendered within the layout.
+ * @param {array} data.props - Additional props to be passed to the Box component.
  */
 export const StableLayout: React.FC<StableLayoutProps> = ({
   className,
@@ -24,7 +24,7 @@ export const StableLayout: React.FC<StableLayoutProps> = ({
 }: StableLayoutProps) => {
   return (
     <Box
-      className={classNames("cn-stable-layout", className)}
+      className={classNames("c-stable-layout", className)}
       w={"100%"}
       h={"100vh"}
       position={"relative"}
