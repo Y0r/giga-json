@@ -49,6 +49,8 @@ export type MenuItem = {
   icon?: React.ReactNode;
   /** Position of the icon relative to the label. Defaults to "before". */
   iconPosition?: IconPosition;
+  /** Shortcut key combination to trigger the action. */
+  shortcut?: string;
   /** Action to perform when clicked. */
   action?: MenuItemAction;
   /** Submenu items if this item has a nested menu. */

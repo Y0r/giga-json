@@ -1,8 +1,9 @@
 import React from "react";
-import { Button, Menu } from "@chakra-ui/react";
+import { Button, Flex, Kbd, Menu } from "@chakra-ui/react";
 import { MenuItem as MenuItemType } from "./menu.types";
-import classNames from "classnames";
 import { LuChevronRight } from "react-icons/lu";
+
+import classNames from "classnames";
 
 interface MenuTriggerProps {
   /** The menu item configuration. */
@@ -23,6 +24,7 @@ export const MenuTrigger: React.FC<MenuTriggerProps> = ({
     label,
     icon,
     iconPosition = "before",
+    shortcut,
     action,
     disabled,
     items,
@@ -42,14 +44,38 @@ export const MenuTrigger: React.FC<MenuTriggerProps> = ({
   const iconBefore = icon && iconPosition === "before" ? icon : undefined;
   const iconAfter = icon && iconPosition === "after" ? icon : undefined;
 
+  const content = (
+    <>
+      <Flex
+        className={"menu-label"}
+        justify={"flex-start"}
+        flexWrap={"nowrap"}
+        alignItems={"center"}
+        alignContent={"center"}
+        gap={1}
+        mr={3}
+      >
+        {iconBefore && <span className="menu-icon-before">{iconBefore}</span>}
+        {label}
+        {iconAfter && <span className="menu-icon-after">{iconAfter}</span>}
+      </Flex>
+
+      {/* Render shortcut if available.*/}
+      {shortcut && (
+        <Kbd className="menu-shortcut" ml="auto" size={"sm"} variant={"subtle"}>
+          {shortcut}
+        </Kbd>
+      )}
+    </>
+  );
+
   // If nested in a submenu
   if (isNested) {
+    const className = classNames({ "has-submenu": hasSubmenu });
     if (hasSubmenu) {
       return (
-        <Menu.TriggerItem className={classNames({ "has-submenu": hasSubmenu })}>
-          {iconBefore && <span className="menu-icon-before">{iconBefore}</span>}
-          {label}
-          {iconAfter && <span className="menu-icon-after">{iconAfter}</span>}
+        <Menu.TriggerItem className={className}>
+          {content}
           <LuChevronRight />
         </Menu.TriggerItem>
       );
@@ -60,51 +86,36 @@ export const MenuTrigger: React.FC<MenuTriggerProps> = ({
         value={label || ""}
         disabled={disabled}
         onClick={handleClick}
-        className={classNames({ "has-submenu": hasSubmenu })}
+        className={className}
       >
-        {iconBefore && <span className="menu-icon-before">{iconBefore}</span>}
-        {label}
-        {iconAfter && <span className="menu-icon-after">{iconAfter}</span>}
+        {content}
       </Menu.Item>
     );
   }
+
+  const buttonProps = {
+    variant: "ghost" as const,
+    size: "sm" as const,
+    disabled,
+    px: 3,
+    py: 1,
+    height: "auto",
+    fontWeight: "normal",
+  };
 
   // Top-level trigger
   if (hasSubmenu) {
     return (
       <Menu.Trigger asChild>
-        <Button
-          variant="ghost"
-          size="sm"
-          disabled={disabled}
-          px={3}
-          py={1}
-          height="auto"
-          fontWeight="normal"
-        >
-          {iconBefore && <span className="menu-icon-before">{iconBefore}</span>}
-          {label}
-          {iconAfter && <span className="menu-icon-after">{iconAfter}</span>}
-        </Button>
+        <Button {...buttonProps}>{content}</Button>
       </Menu.Trigger>
     );
   }
 
   // Simple button without submenu (likely on a menu bar)
   return (
-    <Button
-      variant="ghost"
-      size="sm"
-      disabled={disabled}
-      onClick={handleClick}
-      px={3}
-      py={1}
-      height="auto"
-      fontWeight="normal"
-    >
-      {iconBefore && <span className="menu-icon-before">{iconBefore}</span>}
-      {label}
-      {iconAfter && <span className="menu-icon-after">{iconAfter}</span>}
+    <Button {...buttonProps} onClick={handleClick}>
+      {content}
     </Button>
   );
 };

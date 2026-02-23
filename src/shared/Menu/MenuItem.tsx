@@ -30,7 +30,7 @@ export const MenuItem: React.FC<MenuItemProps> = ({ item }) => {
     <Menu.Root
       positioning={{
         strategy: "fixed",
-        placement: "bottom-end",
+        placement: "bottom-start",
       }}
     >
       <MenuTrigger item={item} />
