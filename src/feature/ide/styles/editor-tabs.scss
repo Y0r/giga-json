@@ -1,4 +1,11 @@
 .c-editor-tabs {
+  padding: var(--chakra-spacing-1) var(--chakra-spacing-2);
+
+  border: 1px solid var(--chakra-colors-gray-900);
+  border-top-left-radius: var(--chakra-radii-lg);
+  border-top-right-radius: var(--chakra-radii-lg);
+  background-color: var(--chakra-colors-gray-900);
+
   /* Hide scrollbar for IE, Edge and Firefox */
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */

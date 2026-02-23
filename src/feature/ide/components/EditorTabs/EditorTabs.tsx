@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from "react";
 
 import { Flex } from "@chakra-ui/react";
 import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
-import { VscFile } from "react-icons/vsc";
+import { VscJson } from "react-icons/vsc";
 
 import EditorTab from "@/feature/ide/components/EditorTabs/EditorTab";
 
@@ -129,7 +129,7 @@ export const EditorTabs = (props: EditorTabsProps) => {
                           fileId={file.id}
                           fileName={file.name}
                           // @todo diff icons per content type.
-                          icon={<VscFile />}
+                          icon={<VscJson />}
                           isActive={file.id === activeTabId}
                           isCloseable={true}
                           hasUnsavedChanges={file.hasUnsavedChanges}
