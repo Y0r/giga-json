@@ -26,9 +26,11 @@ export interface EditorState {
   activeFileIds: string[];
   latestClosedFileIds: string[];
 
-  // Actions
+  // File-related actions.
   createFile: (file: EditorFile) => void;
+  updateFile: (id: string, file: Partial<EditorFile>) => void;
   deleteFile: (id: string) => void;
+  // Tabs-related actions.
   openTab: (id: string) => void;
   reopenTab: (id: string) => void;
   closeTab: (id: string) => void;

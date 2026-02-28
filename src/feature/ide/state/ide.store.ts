@@ -21,6 +21,16 @@ export const useEditorStore = create<EditorState>()(
           activeTabId: file.id,
         })),
 
+      // Update an existing file in the editor state.
+      updateFile: (id: string, file: Partial<EditorFile>) => {
+        set((state) => ({
+          files: {
+            ...state.files,
+            [id]: { ...state.files[id], ...file },
+          },
+        }));
+      },
+
       // Completely remove a file from the editor state.
       deleteFile: (id: string) =>
         set((state) => {
