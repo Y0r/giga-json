@@ -26,7 +26,12 @@ export const useEditorStore = create<EditorState>()(
         set((state) => ({
           files: {
             ...state.files,
-            [id]: { ...state.files[id], ...file },
+            [id]: {
+              ...state.files[id],
+              ...file,
+              // Modify the last modified time of the file.
+              lastModified: Number(new Date()),
+            },
           },
         }));
       },

@@ -5,10 +5,12 @@ export interface EditorFile {
   id: string;
   name: string;
   type: string;
+  lastModified: number;
 
   // Monaco state.
   path: string;
   language: string;
+  cursor: number;
   content: string;
   // @todo use proper type.
   viewState?: unknown;
