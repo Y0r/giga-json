@@ -1,18 +1,29 @@
-import React, { Fragment } from "react";
+import React, { useState } from "react";
+
+import { usePreventReload } from "@/feature/ide/hooks/usePreventReload";
 
 import { StableLayout } from "@/shared/Layout/StableLayout";
 import { Layout } from "@/shared/Layout/Layout";
+import { Flex } from "@chakra-ui/react";
 
-import { Editor, EditorTabs } from "@/feature/ide/components";
-import { MainMenu } from "@/feature/ide/components/Menu/MainMenu";
 import { Logo } from "@/shared/Identica/Logo";
+import { MainMenu } from "@/feature/ide/components/Menu/MainMenu";
+import { Editor, EditorTabs } from "@/feature/ide/components";
+import { ReloadConfirmationModal } from "@/feature/ide/components/Modals";
 
 import "@/feature/ide/styles/ide.scss";
-import { Flex, Text } from "@chakra-ui/react";
 
 interface IDEProps {}
 
 export const IDE = (props: IDEProps) => {
+  // Modal-related states.
+  const [isReloadModalOpen, setIsReloadModalOpen] = useState(false);
+
+  // Helper to stop reload and inform user about potential data loss.
+  usePreventReload(() => {
+    setIsReloadModalOpen(true);
+  });
+
   return (
     <StableLayout className={"c-ide"}>
       <Layout className={"c-ide-heading"}>
@@ -34,6 +45,12 @@ export const IDE = (props: IDEProps) => {
         {/* @todo display file path in footer. */}
         {/* @todo render goto-line widget */}
       </Layout>
+
+      {/* Misc. renderings */}
+      <ReloadConfirmationModal
+        isOpen={isReloadModalOpen}
+        onClose={() => setIsReloadModalOpen(false)}
+      />
     </StableLayout>
   );
 };
