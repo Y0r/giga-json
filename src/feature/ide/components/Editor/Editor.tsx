@@ -18,6 +18,7 @@ export const Editor = (props: EditorProps) => {
   const activeTabId = useEditorStore((state) => state.activeTabId);
 
   // Hooks to work with global state.
+  const openTab = useEditorStore((state) => state.openTab);
   const updateFile = useEditorStore((state) => state.updateFile);
 
   // Objects to contain instance of Monaco editor.
@@ -70,9 +71,14 @@ export const Editor = (props: EditorProps) => {
     const editor = editorRef.current;
 
     const model = models[activeTabId];
-    if (model) {
-      editor.setModel(model);
+    // If there is no model for the active tab, open the first one.
+    if (!model) {
+      openTab(Object.keys(files)[0]);
+      // @todo register an error.
     }
+
+    // Set the model for the editor.
+    editor.setModel(model);
 
     const modifyModelContent = debounce((content: string) => {
       updateFile(activeTabId, { content });
