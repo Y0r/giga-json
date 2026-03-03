@@ -9,8 +9,9 @@ interface ReloadConfirmationModalProps {
 /**
  * Modal to display when the user tries to reload the page.
  *
- * @param {boolean} isOpen - Whether the modal is open.
- * @param {() => void} onClose - Callback to be called when the modal is closed.
+ * @param {object} props - The component props.
+ * @param {boolean} props.isOpen - Whether the modal is open.
+ * @param {() => void} props.onClose - Callback to be called when the modal is closed.
  */
 export const ReloadConfirmationModal = ({
   isOpen,
