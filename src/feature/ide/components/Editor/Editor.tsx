@@ -86,7 +86,15 @@ export const Editor = (props: EditorProps) => {
 
     // onDidChangeModelLanguage
     const disposable = editor.onDidChangeModelContent(() => {
-      modifyModelContent(editor.getValue());
+      const value = editor.getValue();
+
+      const position = editor.getPosition();
+      const indexPosition = editor.getModel()?.getOffsetAt(position);
+
+      console.log("position: ", position);
+      console.log("indexPosition: ", indexPosition);
+
+      modifyModelContent(value);
     });
 
     return () => {
