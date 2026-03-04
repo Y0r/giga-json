@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React from "react";
 
+import { useModalStore } from "@/feature/modalManager/state/modal.store";
 import { usePreventReload } from "@/feature/ide/hooks/usePreventReload";
 
 import { StableLayout } from "@/shared/Layout/StableLayout";
@@ -9,20 +10,17 @@ import { Flex } from "@chakra-ui/react";
 import { Logo } from "@/shared/Identica/Logo";
 import { MainMenu } from "@/feature/ide/components/Menu/MainMenu";
 import { Editor, EditorTabs } from "@/feature/ide/components";
-import { ReloadConfirmationModal } from "@/feature/ide/components/Modals";
+import { ModalManager } from "@/feature/modalManager/ModalManager";
 
 import "@/feature/ide/styles/ide.scss";
 
 interface IDEProps {}
 
 export const IDE = (props: IDEProps) => {
-  // Modal-related states.
-  const [isReloadModalOpen, setIsReloadModalOpen] = useState(false);
+  const openModal = useModalStore((s) => s.openModal);
 
   // Helper to stop reload and inform user about potential data loss.
-  usePreventReload(() => {
-    setIsReloadModalOpen(true);
-  });
+  usePreventReload(() => openModal("RELOAD_CONFIRMATION"));
 
   return (
     <StableLayout className={"c-ide"}>
@@ -47,10 +45,7 @@ export const IDE = (props: IDEProps) => {
       </Layout>
 
       {/* Misc. renderings */}
-      <ReloadConfirmationModal
-        isOpen={isReloadModalOpen}
-        onClose={() => setIsReloadModalOpen(false)}
-      />
+      <ModalManager />
     </StableLayout>
   );
 };
