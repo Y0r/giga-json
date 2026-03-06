@@ -53,6 +53,7 @@ export const NameInputModal = ({
                   onKeyDown={(event) => {
                     if (event.key === "Enter") {
                       onSubmit(value);
+                      onClose();
                     }
                   }}
                 />
