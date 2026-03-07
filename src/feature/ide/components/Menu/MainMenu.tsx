@@ -9,11 +9,15 @@ import {
 } from "react-icons/vsc";
 
 import { useFiles } from "@/feature/ide/hooks/useFiles";
+import { getMenuSchema as getTabsMenuSchema } from "@/feature/ide/components/Menu/TabsMenu";
 
-export const MainMenu = () => {
+/**
+ * Menu schema for the main menu.
+ */
+export const getMenuSchema = () => {
   const { createEmptyFile, createFromFile } = useFiles();
 
-  const mainMenu = {
+  return {
     orientation: "horizontal" as const,
     items: [
       {
@@ -70,8 +74,21 @@ export const MainMenu = () => {
           },
         ],
       },
+      {
+        label: "Window",
+        icon: null,
+        items: [
+          {
+            label: "Editor Tabs",
+            icon: null,
+            items: [...getTabsMenuSchema().items],
+          },
+        ],
+      },
     ],
   };
+};
 
-  return <MenuRoot className={"c-main-menu"} menu={mainMenu} />;
+export const MainMenu = () => {
+  return <MenuRoot className={"c-main-menu"} menu={getMenuSchema()} />;
 };
