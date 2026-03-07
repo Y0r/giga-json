@@ -13,8 +13,20 @@ import { config } from "@/config";
  * @returns An object containing the `createEmptyFile` and `createFromFile` functions.
  */
 export const useFiles = () => {
+  const files = useEditorStore((state) => state.files);
   const createFile = useEditorStore((state) => state.createFile);
   const openModal = useModalStore((state) => state.openModal);
+  const openTab = useEditorStore((state) => state.openTab);
+
+  /**
+   * Retrieves a file by a given key and value.
+   */
+  function getFileBy(
+    key: keyof EditorFile,
+    value: EditorFile[keyof EditorFile],
+  ): EditorFile | null {
+    return Object.values(files).find((file) => file[key] === value) ?? null;
+  }
 
   /**
    * Opens a modal to prompt the user for a filename and creates a new empty file.
@@ -106,6 +118,7 @@ export const useFiles = () => {
   }
 
   return {
+    getFileBy,
     createEmptyFile,
     createFromFile,
   };
