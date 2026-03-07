@@ -1,4 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
+
+import { useFiles } from "@/feature/ide/hooks/useFiles";
+import { getFileInfo } from "@/feature/ide/utils/fileUtils";
+
 import { Input, Field, Portal, Dialog, CloseButton } from "@chakra-ui/react";
 
 interface FileNameInputModalProps {
@@ -9,11 +13,6 @@ interface FileNameInputModalProps {
 
 /**
  * Modal to prompt the user for a new file name.
- *
- * @param {object} props - The component props.
- * @param {boolean} props.isOpen - Whether the modal is open.
- * @param {Function} props.onSubmit - Callback function to handle the submission of the file name.
- * @param {Function} props.onClose - Callback function to handle the closing of the modal.
  */
 export const NameInputModal = ({
   isOpen,
@@ -22,12 +21,44 @@ export const NameInputModal = ({
 }: FileNameInputModalProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
   const [value, setValue] = useState("");
+  const [error, setError] = useState<string | null>(null);
 
+  // Hook to access file operations and lookup
+  const { getFileBy } = useFiles();
+
+  // Reset state when the modal opens
   useEffect(() => {
-    if (isOpen && inputRef.current) {
-      inputRef.current.focus();
+    if (isOpen) {
+      setValue("");
+      setError(null);
+      // Use requestAnimationFrame or setTimeout to ensure focus happens after render
+      const timeout = setTimeout(() => inputRef.current?.focus(), 0);
+      return () => clearTimeout(timeout);
     }
   }, [isOpen]);
+
+  const handleSubmit = () => {
+    const trimmedValue = value.trim();
+
+    // Requirement: Name could not be empty
+    if (!trimmedValue) {
+      setError("Name cannot be empty");
+      return;
+    }
+
+    // Resolve the final name (handles extensions like .txt)
+    const { name } = getFileInfo(trimmedValue);
+
+    // Requirement: Name should be unique (using getFileBy)
+    if (getFileBy("name", name)) {
+      setError(`A file with the name "${name}" already exists`);
+      return;
+    }
+
+    // If valid, submit and close
+    onSubmit(trimmedValue);
+    onClose();
+  };
 
   return (
     <Dialog.Root
@@ -44,19 +75,22 @@ export const NameInputModal = ({
               <Dialog.Title>New File Name</Dialog.Title>
             </Dialog.Header>
             <Dialog.Body>
-              <Field.Root required>
+              <Field.Root invalid={!!error} required>
                 <Input
                   ref={inputRef}
                   value={value}
-                  onChange={(event) => setValue(event.target.value)}
-                  placeholder={"Name"}
+                  onChange={(event) => {
+                    setValue(event.target.value);
+                    if (error) setError(null);
+                  }}
+                  placeholder={"Enter file name..."}
                   onKeyDown={(event) => {
                     if (event.key === "Enter") {
-                      onSubmit(value);
-                      onClose();
+                      handleSubmit();
                     }
                   }}
                 />
+                {error && <Field.ErrorText>{error}</Field.ErrorText>}
               </Field.Root>
             </Dialog.Body>
             <Dialog.Footer>
