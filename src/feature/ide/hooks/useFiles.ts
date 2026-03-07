@@ -72,7 +72,15 @@ export const useFiles = () => {
       const content = await file.text();
       const language = getLanguage(file.name, file.type);
 
-      console.log("file: ", file);
+      // Try to find a duplicate of the file by path.
+      const duplicateOf = getFileBy("path", `file://${file.name}`);
+
+      if (duplicateOf) {
+        const error = `Duplicate file detected: file://${file.name}. Opening existing file instead.`;
+        console.log(error);
+        openTab(duplicateOf.id);
+        return;
+      }
 
       const data = {
         name: file.name,
