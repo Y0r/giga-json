@@ -5,9 +5,10 @@
 
 interface ImportMetaEnv {
   readonly VITE_APP_NAME: string;
-  readonly VITE_DEV: boolean;
-  readonly VITE_DEBUG_MODE: boolean;
-  readonly VITE_DISPLAY_ERRORS: boolean;
+  readonly VITE_DEV: string;
+  readonly VITE_DEBUG_MODE: string;
+  readonly VITE_DEBUG_FILE_CREATION: string;
+  readonly VITE_DEBUG_DISPLAY_ERRORS: string;
 }
 
 interface ImportMeta {
