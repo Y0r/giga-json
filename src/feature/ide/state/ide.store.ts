@@ -62,7 +62,12 @@ export const useEditorStore = create<EditorState>()(
       // Reopen a recently closed file.
       reopenTab: (id: string) =>
         set((state) => ({
+          files: {
+            ...state.files,
+            [id]: { ...state.files[id], isDeleted: false },
+          },
           activeTabId: id,
+          activeFileIds: [...state.activeFileIds, id],
           latestClosedFileIds: state.latestClosedFileIds.filter(
             (fileId) => fileId !== id,
           ),
@@ -75,11 +80,14 @@ export const useEditorStore = create<EditorState>()(
             ...state.files,
             [id]: { ...state.files[id], isDeleted: true },
           },
+          // @todo open previous tab in the list, not first in the list.
+          activeTabId: state.activeFileIds[0],
           activeFileIds: state.activeFileIds.filter((fileId) => fileId !== id),
           latestClosedFileIds: [...state.latestClosedFileIds, id],
         })),
 
       // Update all active file ids in the editor state.
+      // Note: to not use this method to add or remove items.
       updateTabs: (updatedActiveFileIds: string[]) =>
         set((state) => ({
           // Destruct and create a new array to avoid mutating the original array.
