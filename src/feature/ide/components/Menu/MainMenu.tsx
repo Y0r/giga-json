@@ -1,5 +1,5 @@
 import React from "react";
-import { MenuRoot } from "@/shared/Menu";
+import { Menu } from "@/shared/Menu";
 import {
   VscCopy,
   VscFile,
@@ -90,5 +90,5 @@ export const getMenuSchema = () => {
 };
 
 export const MainMenu = () => {
-  return <MenuRoot className={"c-main-menu"} menu={getMenuSchema()} />;
+  return <Menu className={"c-main-menu"} menu={getMenuSchema()} />;
 };
