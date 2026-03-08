@@ -36,6 +36,7 @@ export const EditorTab = ({
    * @param {React.Event} event - The event object.
    */
   const handleClick = (event: React.MouseEvent | React.KeyboardEvent) => {
+    event.preventDefault();
     event.stopPropagation();
     onClick(fileId);
   };
@@ -46,6 +47,7 @@ export const EditorTab = ({
    * @param {React.Event} event - The event object.
    */
   const handleClose = (event: React.MouseEvent | React.KeyboardEvent) => {
+    event.preventDefault();
     event.stopPropagation();
     onClose(fileId);
   };

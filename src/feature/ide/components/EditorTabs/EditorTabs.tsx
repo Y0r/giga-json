@@ -5,6 +5,7 @@ import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
 import { VscJson } from "react-icons/vsc";
 
 import EditorTab from "@/feature/ide/components/EditorTabs/EditorTab";
+import { TabsMenu } from "@/feature/ide/components/Menu/TabsMenu";
 
 import { useEditorStore } from "@/feature/ide/state/ide.store";
 import { EditorFile } from "@/feature/ide/state/ide.types";
@@ -69,7 +70,7 @@ export const EditorTabs = (props: EditorTabsProps) => {
   /**
    * Drag and drop handler for the editor tabs.
    *
-   * @param result
+   * @param result - The drag and drop result object.
    */
   const handleDrag = (result: any) => {
     const { source, destination } = result;
@@ -118,25 +119,27 @@ export const EditorTabs = (props: EditorTabsProps) => {
                     draggableId={`tab-${file.id}`}
                   >
                     {(draggableProvider) => (
-                      <div
-                        {...draggableProvider.dragHandleProps}
-                        {...draggableProvider.draggableProps}
-                        ref={draggableProvider.innerRef}
-                      >
-                        <EditorTab
-                          key={index}
-                          className={"c-editor-tab__index-" + index}
-                          fileId={file.id}
-                          fileName={file.name}
-                          // @todo diff icons per content type.
-                          icon={<VscJson />}
-                          isActive={file.id === activeTabId}
-                          isCloseable={true}
-                          hasUnsavedChanges={file.hasUnsavedChanges}
-                          onClick={handleOpen}
-                          onClose={handleClose}
-                        />
-                      </div>
+                      <TabsMenu focusedTabId={file.id}>
+                        <div
+                          {...draggableProvider.dragHandleProps}
+                          {...draggableProvider.draggableProps}
+                          ref={draggableProvider.innerRef}
+                        >
+                          <EditorTab
+                            key={index}
+                            className={"c-editor-tab__index-" + index}
+                            fileId={file.id}
+                            fileName={file.name}
+                            // @todo diff icons per content type.
+                            icon={<VscJson />}
+                            isActive={file.id === activeTabId}
+                            isCloseable={true}
+                            hasUnsavedChanges={file.hasUnsavedChanges}
+                            onClick={handleOpen}
+                            onClose={handleClose}
+                          />
+                        </div>
+                      </TabsMenu>
                     )}
                   </Draggable>
                 ))}
