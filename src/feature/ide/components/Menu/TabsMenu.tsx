@@ -1,13 +1,19 @@
-import React from "react";
-import { MenuRoot } from "@/shared/Menu";
+import React, { ReactNode } from "react";
+import { MenuFromContext, Menu } from "@/shared/Menu";
 import { VscGithub } from "react-icons/vsc";
 
 import { useTabs } from "@/feature/ide/hooks/useTabs";
+import { EditorFile } from "@/feature/ide/state/ide.types";
+
+interface TabsMenuProps {
+  focusedTabId: EditorFile["id"];
+  children: ReactNode;
+}
 
 /**
  * Menu schema for the tab's menu.
  */
-export const getMenuSchema = () => {
+export const getMenuSchema = (focusedTabId?: TabsMenuProps["focusedTabId"]) => {
   const {
     closeCurrentTab,
     closeOtherTabs,
@@ -15,7 +21,7 @@ export const getMenuSchema = () => {
     closeTabsToTheLeft,
     closeTabsToTheRight,
     reopenClosedTab,
-  } = useTabs();
+  } = useTabs(focusedTabId);
 
   return {
     orientation: "vertical" as const,
@@ -90,6 +96,10 @@ export const getMenuSchema = () => {
   };
 };
 
-export const TabsMenu = () => {
-  return <MenuRoot className={"c-tabs-menu"} menu={getMenuSchema()} />;
+export const TabsMenu = ({ focusedTabId, children }: TabsMenuProps) => {
+  return (
+    <MenuFromContext items={getMenuSchema(focusedTabId).items}>
+      {children}
+    </MenuFromContext>
+  );
 };
