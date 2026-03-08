@@ -1,6 +1,7 @@
 import { useEditorStore } from "@/feature/ide/state/ide.store";
+import { EditorFile } from "@/feature/ide/state/ide.types";
 
-export const useTabs = () => {
+export const useTabs = (focusedTabId?: EditorFile["id"]) => {
   // Data retrieval.
   const activeTabId = useEditorStore((state) => state.activeTabId);
   const activeFileIds = useEditorStore((state) => state.activeFileIds);
@@ -8,24 +9,29 @@ export const useTabs = () => {
     (state) => state.latestClosedFileIds,
   );
 
+  const targetTabId = focusedTabId ?? activeTabId;
+  const targetTabPosition = targetTabId
+    ? activeFileIds.indexOf(targetTabId)
+    : -1;
+
   // Hooks for data manipulation.
   const closeTab = useEditorStore((state) => state.closeTab);
   const reopenTab = useEditorStore((state) => state.reopenTab);
 
   /**
-   * Closes the currently active tab.
+   * Closes the currently active or focused tab.
    */
   function closeCurrentTab() {
-    if (!activeTabId) return;
-    closeTab(activeTabId);
+    if (targetTabId) closeTab(targetTabId);
   }
 
   /**
-   * Closes all tabs except the active one.
+   * Closes all tabs except the active or focused one.
    */
   function closeOtherTabs() {
-    activeFileIds.map((id) => {
-      if (id !== activeTabId) {
+    if (!targetTabId) return;
+    activeFileIds.forEach((id) => {
+      if (id !== targetTabId) {
         closeTab(id);
       }
     });
@@ -35,27 +41,28 @@ export const useTabs = () => {
    * Closes all tabs.
    */
   function closeAllTabs() {
-    activeFileIds.map(closeTab);
+    activeFileIds.forEach(closeTab);
   }
 
   /**
-   * Closes all tabs to the left of the active tab.
+   * Closes all tabs to the left of the active or focused tab.
    */
   function closeTabsToTheLeft() {
-    if (!activeTabId || activeFileIds.length <= 1) return;
-    const position = activeFileIds.indexOf(activeTabId);
-    const tabsToClose = activeFileIds.slice(0, position);
-    tabsToClose.map(closeTab);
+    if (targetTabPosition <= 0) return;
+    activeFileIds.slice(0, targetTabPosition).forEach(closeTab);
   }
 
   /**
-   * Closes all tabs to the right of the active tab.
+   * Closes all tabs to the right of the active or focused tab.
    */
   function closeTabsToTheRight() {
-    if (!activeTabId || activeFileIds.length <= 1) return;
-    const position = activeFileIds.indexOf(activeTabId);
-    const tabsToClose = activeFileIds.slice(position + 1);
-    tabsToClose.map(closeTab);
+    if (
+      targetTabPosition === -1 ||
+      targetTabPosition === activeFileIds.length - 1
+    ) {
+      return;
+    }
+    activeFileIds.slice(targetTabPosition + 1).forEach(closeTab);
   }
 
   /**
