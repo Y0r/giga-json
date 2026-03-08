@@ -1,6 +1,7 @@
 import React from "react";
+
 import { Button, Flex, Kbd, Menu } from "@chakra-ui/react";
-import { MenuItem as MenuItemType } from "./menu.types";
+import { MenuItem as MenuItemType } from "@/shared/Menu/state/menu.types";
 import { LuChevronRight } from "react-icons/lu";
 
 import classNames from "classnames";

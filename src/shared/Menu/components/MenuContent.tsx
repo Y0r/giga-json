@@ -1,7 +1,8 @@
 import React from "react";
+
 import { Menu, Portal } from "@chakra-ui/react";
-import { MenuItem as MenuItemType } from "./menu.types";
 import { MenuTrigger } from "./MenuTrigger";
+import { MenuItem as MenuItemType } from "@/shared/Menu/state/menu.types";
 
 interface MenuContentProps {
   /** The list of menu items to display within the content. */

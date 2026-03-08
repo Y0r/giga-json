@@ -1,8 +1,8 @@
 import React from "react";
-import { MenuItem as MenuItemType } from "./menu.types";
-import { MenuTrigger } from "./MenuTrigger";
-import { MenuContent } from "./MenuContent";
+
 import { Menu } from "@chakra-ui/react";
+import { MenuTrigger, MenuContent } from "@/shared/Menu";
+import { MenuItem as MenuItemType } from "@/shared/Menu/state/menu.types";
 
 interface MenuItemProps {
   /** The menu item configuration. */
