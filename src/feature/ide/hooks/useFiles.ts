@@ -13,10 +13,14 @@ import { config } from "@/config";
  * @returns An object containing the `createEmptyFile` and `createFromFile` functions.
  */
 export const useFiles = () => {
+  // Data retrieval.
   const files = useEditorStore((state) => state.files);
+
+  // Hooks for data manipulation.
   const createFile = useEditorStore((state) => state.createFile);
-  const openModal = useModalStore((state) => state.openModal);
   const openTab = useEditorStore((state) => state.openTab);
+  const openModal = useModalStore((state) => state.openModal);
+  const reopenTab = useEditorStore((state) => state.reopenTab);
 
   /**
    * Retrieves a file by a given key and value.
@@ -76,6 +80,12 @@ export const useFiles = () => {
       const duplicateOf = getFileBy("path", `file://${file.name}`);
 
       if (duplicateOf) {
+        // If duplicate, bug origin is closed, then reopen it.
+        if (!duplicateOf.isClosed) {
+          reopenTab(duplicateOf.id);
+          return;
+        }
+
         const error = `Duplicate file detected: file://${file.name}. Opening existing file instead.`;
         console.log(error);
         openTab(duplicateOf.id);
