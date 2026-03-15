@@ -74,38 +74,43 @@ export const Editor = (props: EditorProps) => {
   }, [isInitialised, files]);
 
   /**
-   * Handle model switching and content updates when activeTabId or models change.
-   * Debounces file updates to global state to improve performance.
+   * This hook manages the active model in the editor and synchronizes content changes.
+   * The "patient" approach ensures that if a new file is created, we wait for its
+   * model to be initialized before attempting to set it, preventing accidental
+   * redirections caused by race conditions.
    */
   useEffect(() => {
     if (!editorRef.current || !monacoRef.current || !activeTabId) return;
     const editor = editorRef.current;
 
     const model = models[activeTabId];
-    // If there is no model for the active tab, open the first one.
+
     if (!model) {
-      openTab(Object.keys(files)[0]);
-      // @todo register an error.
+      // If the file exists in the store but its model hasn't been created yet,
+      // break processing and wait for the model management effect to catch up.
+      if (files[activeTabId]) return;
+
+      // Redirect to the first available tab if the file itself is missing from the store.
+      const firstFileId = Object.keys(files)[0];
+      if (firstFileId && firstFileId !== activeTabId) {
+        openTab(firstFileId);
+
+        const error = `Tried to open tab for ${activeTabId} file, but no model was found. Opening first available model instead.`;
+        console.log(error);
+      }
+      return;
     }
 
-    // Set the model for the editor.
+    // Set the active model in the editor.
     editor.setModel(model);
 
+    // Sync editor content back to the global store with a debounce.
     const modifyModelContent = debounce((content: string) => {
       updateFile(activeTabId, { content });
     }, 500);
 
-    // onDidChangeModelLanguage
     const disposable = editor.onDidChangeModelContent(() => {
-      const value = editor.getValue();
-
-      const position = editor.getPosition();
-      const indexPosition = editor.getModel()?.getOffsetAt(position);
-
-      console.log("position: ", position);
-      console.log("indexPosition: ", indexPosition);
-
-      modifyModelContent(value);
+      modifyModelContent(editor.getValue());
     });
 
     return () => {
