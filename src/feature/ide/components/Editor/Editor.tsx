@@ -135,14 +135,14 @@ export const Editor = (props: EditorProps) => {
       width={"100%"}
       height={"85vh"}
       theme={"vs-dark"}
-      onMount={(
-        editor: monaco.editor.IStandaloneCodeEditor,
-        monaco: Monaco,
-      ) => {
-        editorRef.current = editor;
-        monacoRef.current = monaco;
-        setIsInitialised(true);
-      }}
+      onMount={useCallback(
+        (editor: monaco.editor.IStandaloneCodeEditor, monaco: Monaco) => {
+          editorRef.current = editor;
+          monacoRef.current = monaco;
+          setIsInitialised(true);
+        },
+        [],
+      )}
     />
   );
 };
