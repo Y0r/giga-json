@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { useEditorStore } from "@/feature/ide/state/ide.store";
 import debounce from "@/feature/ide/utils/debounce";
@@ -31,36 +31,47 @@ export const Editor = (props: EditorProps) => {
   >({});
 
   /**
-   * Initialize models for all files and handle their disposal.
-   * Runs when the editor is initialized.
-   *
-   * @todo ensure models couldn't be serialized and saved as file property.
+   * This hook synchronizes the Monaco models with the files in the global store.
+   * It uses an incremental approach (creating new ones and disposing of old ones)
+   * to preserve the undo/redo stack and editor markers for existing tabs.
    */
   useEffect(() => {
-    // Skip if there are no entities to work with.
-    if (!editorRef.current || !monacoRef.current) return;
+    // Wait until Monaco and the editor are initialized.
+    if (!isInitialised || !monacoRef.current) return;
+    const monaco = monacoRef.current;
 
-    // Create models from files.
-    const modelsFromFiles: Record<string, monaco.editor.ITextModel> = {};
-    for (const [key, file] of Object.entries(files)) {
-      // Skip if a model with the id are already exists.
-      if (modelsFromFiles[key]) continue;
+    setModels((prevModels) => {
+      const nextModels = { ...prevModels };
+      let hasChanged = false;
 
-      modelsFromFiles[key] = monacoRef.current.editor.createModel(
-        file.content,
-        file.language,
-        monacoRef.current.Uri.parse(file.path),
-      );
-    }
+      // Loop through the files and create models for each.
+      // Skip if the model exists and dispose of it if a file was removed.
+      Object.entries(files).forEach(([id, file]) => {
+        if (!nextModels[id]) {
+          const uri = monaco.Uri.parse(file.path);
+          let model = monaco.editor.getModel(uri);
 
-    setModels(modelsFromFiles);
+          if (!model) {
+            model = monaco.editor.createModel(file.content, file.language, uri);
+          }
 
-    return () => {
-      for (const model of Object.values(modelsFromFiles)) {
-        model.dispose();
-      }
-    };
-  }, [isInitialised, Object.keys(files).length]);
+          nextModels[id] = model;
+          hasChanged = true;
+        }
+      });
+
+      // Targeted Disposal for files that are no longer in the store.
+      Object.keys(nextModels).forEach((id) => {
+        if (!files[id]) {
+          nextModels[id].dispose();
+          delete nextModels[id];
+          hasChanged = true;
+        }
+      });
+
+      return hasChanged ? nextModels : prevModels;
+    });
+  }, [isInitialised, files]);
 
   /**
    * Handle model switching and content updates when activeTabId or models change.
