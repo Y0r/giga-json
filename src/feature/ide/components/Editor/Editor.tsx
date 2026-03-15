@@ -116,7 +116,19 @@ export const Editor = (props: EditorProps) => {
     return () => {
       disposable.dispose();
     };
-  }, [activeTabId, models, updateFile]);
+  }, [activeTabId, models, files, updateFile, openTab]);
+
+  /**
+   * Ensures all Monaco models are disposed of when the Editor component is unmounted.
+   */
+  useEffect(() => {
+    return () => {
+      setModels((prev) => {
+        Object.values(prev).forEach((m) => m.dispose());
+        return {};
+      });
+    };
+  }, []);
 
   return (
     <MonacoEditor
