@@ -1,6 +1,6 @@
 import { useEditorStore } from "@/feature/ide/state/ide.store";
 import { useModalStore } from "@/feature/modalManager/state/modal.store";
-import { getFileInfo, getLanguage } from "@/feature/ide/utils/fileUtils";
+import { getFileInfo, getMimeType } from "@/feature/ide/utils/fileUtils";
 import { EditorFile } from "@/feature/ide/state/ide.types";
 import { config } from "@/config";
 
@@ -14,6 +14,7 @@ import { config } from "@/config";
  */
 export const useFiles = () => {
   // Data retrieval.
+  const activeTabId = useEditorStore((state) => state.activeTabId);
   const files = useEditorStore((state) => state.files);
 
   // Hooks for data manipulation.
@@ -41,13 +42,13 @@ export const useFiles = () => {
   function createEmptyFile() {
     openModal("NAME_INPUT", {
       onSubmit: (userInput: string) => {
-        const { name, mimeType, language } = getFileInfo(userInput);
+        const { name, type, language } = getFileInfo(userInput);
         const path = `file://${name}`;
 
         const data = {
           name: name,
           path: path,
-          type: mimeType,
+          type: type,
           lastModified: Date.now(),
           // Monaco required props.
           language: language,
@@ -74,7 +75,7 @@ export const useFiles = () => {
       const [handle] = await window.showOpenFilePicker();
       const file = await handle.getFile();
       const content = await file.text();
-      const language = getLanguage(file.name, file.type);
+      const { type, language } = getFileInfo(file.name);
 
       // Try to find a duplicate of the file by path.
       const duplicateOf = getFileBy("path", `file://${file.name}`);
@@ -95,7 +96,7 @@ export const useFiles = () => {
       const data = {
         name: file.name,
         path: `file://${file.name}`,
-        type: file.type,
+        type: type,
         lastModified: file.lastModified,
         // Monaco required props.
         language: language,
@@ -109,7 +110,7 @@ export const useFiles = () => {
       createFromProps(data);
     } catch (error) {
       if ((error as Error).name !== "AbortError") {
-        // @todo register an error.
+        // @todo register an error with notification.
         console.error("Failed to create file from local file system", error);
       }
     }
@@ -135,10 +136,34 @@ export const useFiles = () => {
     createFile(fileProps);
   }
 
+  /**
+   * Prompts the user to save a file with a specified name and type in a location of their choice.
+   *
+   * This method retrieves the currently active file based on the active tab ID, determines its MIME type,
+   * and opens a save file dialog for the user. If no active tab is found, the operation is canceled.
+   *
+   * @return {Promise<FileSystemFileHandle | undefined>} A promise that resolves to a `FileSystemFileHandle`
+   * object representing the saved file, or `undefined` if no active tab is found or the operation is canceled.
+   */
+  async function saveFileAs() {
+    if (!activeTabId) return;
+    const file = files[activeTabId];
+    const mimeType = getMimeType(file.name) ?? "text/plain";
+
+    const options = {
+      startIn: "downloads",
+      suggestedName: file.name,
+      types: [{ accept: { [mimeType]: [`.${file.type}`] } }],
+    };
+
+    return await window.showSaveFilePicker(options);
+  }
+
   return {
     getFileBy,
     createEmptyFile,
     createFromFile,
+    saveFileAs,
   };
 };
 

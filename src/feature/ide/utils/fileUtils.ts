@@ -13,15 +13,39 @@ import mime from "mime/lite";
 export const getFileInfo = (filename: string) => {
   const hasExtension = filename.includes(".");
   const name = hasExtension ? filename : `${filename}.txt`;
-  const mimeType = mime.getType(name) || "text/plain";
+  const type = getType(filename) || "txt";
+  const mimeType = getMimeType(filename) || "text/plain";
   const language = getLanguage(name, mimeType);
 
   return {
     name,
+    type,
     mimeType,
     language,
   };
 };
+
+/**
+ * Extracts and returns the file type (extension) from a given filename.
+ *
+ * This function splits the filename by periods (.) and retrieves the last segment,
+ * which represents the file extension. The returned extension is converted to lowercase.
+ *
+ * @param {string} filename - The name of the file, including its extension.
+ * @returns {string | undefined} The lowercase file extension if present, or undefined if the filename lacks an extension.
+ */
+export const getType = (filename: string): string | undefined =>
+  filename.split(".").pop()?.toLowerCase();
+
+/**
+ * Determines the MIME type of a given file based on its filename or extension.
+ * If the MIME type cannot be determined, it defaults to "text/plain".
+ *
+ * @param {string} filename - The name of the file whose MIME type is to be determined.
+ * @returns {string|null} The MIME type of the file, or "text/plain" if no valid type is found.
+ */
+export const getMimeType = (filename: string): string | null =>
+  mime.getType(filename);
 
 /**
  * Resolves the Monaco language identifier for a given file.
