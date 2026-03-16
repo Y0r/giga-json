@@ -6,6 +6,7 @@ import {
   VscFolder,
   VscInsert,
   VscSaveAs,
+  VscTrash,
 } from "react-icons/vsc";
 
 import { useFiles } from "@/feature/ide/hooks/useFiles";
@@ -15,7 +16,7 @@ import { getMenuSchema as getTabsMenuSchema } from "@/feature/ide/components/Men
  * Menu schema for the main menu.
  */
 export const getMenuSchema = () => {
-  const { createEmptyFile, createFromFile } = useFiles();
+  const { createEmptyFile, createFromFile, saveFileAs } = useFiles();
 
   return {
     orientation: "horizontal" as const,
@@ -46,7 +47,22 @@ export const getMenuSchema = () => {
             icon: <VscSaveAs />,
             action: {
               type: "callback" as const,
-              onClick: () => console.log("Save as..."),
+              onClick: saveFileAs,
+            },
+          },
+          { type: "separator" as const },
+          {
+            label: "Clear storage",
+            icon: <VscTrash />,
+            action: {
+              type: "callback" as const,
+              onClick: () => {
+                // @todo register event with notification.
+                // @todo remove specific items from storage.
+                // @todo inform user about success.
+                window.localStorage.clear();
+                location.reload();
+              },
             },
           },
         ],
