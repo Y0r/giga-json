@@ -40,10 +40,12 @@ export const useEditorStore = create<EditorState>()(
       deleteFile: (id: string) =>
         set((state) => {
           // Remove the file from the editor state.
+          const newActiveTabId = state.activeFileIds[0];
           const { [id]: _, ...remainingFiles } = state.files;
 
           return {
             files: remainingFiles,
+            activeTabId: newActiveTabId,
             activeFileIds: state.activeFileIds.filter(
               (fileId) => fileId !== id,
             ),
