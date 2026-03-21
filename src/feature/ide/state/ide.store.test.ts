@@ -23,7 +23,7 @@ describe("Editor Store", () => {
         const id = `fid-${index}`;
         const name = `file-${randomId}.json`;
 
-        let file: EditorFile = {
+        const file: EditorFile = {
           id: id,
           name: name,
           path: `file://${name}`,
