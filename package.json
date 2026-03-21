@@ -10,6 +10,9 @@
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:run": "vitest run",
+    "lint": "eslint .",
+    "format:check": "prettier --check .",
+    "format:fix": "prettier --write .",
     "prepare": "husky"
   },
   "devDependencies": {

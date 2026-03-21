@@ -1,0 +1,55 @@
+name: CI
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+  workflow_dispatch:
+
+jobs:
+  lint-and-format:
+    name: Lint and Format Check
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks out the repository under $GITHUB_WORKSPACE, so your job can access it.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # Installs Node.js 24 (LTS) and caches the dependencies for future runs.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+      # 'npm ci' is preferred for CI environments as it is faster and more reliable.
+      - name: Install dependencies
+        run: npm ci
+      # Executes ESLint to check for code quality and potential errors.
+      - name: Run ESLint
+        run: npm run lint
+      # Executes Prettier in check mode to verify the code is formatted properly.
+      - name: Check Formatting
+        run: npm run format:check
+
+  vitest-tests:
+    name: Run Vitest Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checks out the repository under $GITHUB_WORKSPACE, so your job can access it.
+      - name: Checkout repository
+        uses: actions/checkout@v4
+      # Installs Node.js 24 (LTS) and caches the dependencies for future runs.
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+          cache: "npm"
+      # 'npm ci' is preferred for CI environments as it is faster and more reliable.
+      - name: Install dependencies
+        run: npm ci
+      # Executes Vitest in non-interactive run mode.
+      - name: Run tests
+        run: npm run test:run
