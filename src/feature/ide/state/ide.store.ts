@@ -40,10 +40,12 @@ export const useEditorStore = create<EditorState>()(
       deleteFile: (id: string) =>
         set((state) => {
           // Remove the file from the editor state.
+          const newActiveTabId = state.activeFileIds[0];
           const { [id]: _, ...remainingFiles } = state.files;
 
           return {
             files: remainingFiles,
+            activeTabId: newActiveTabId,
             activeFileIds: state.activeFileIds.filter(
               (fileId) => fileId !== id,
             ),
@@ -64,7 +66,7 @@ export const useEditorStore = create<EditorState>()(
         set((state) => ({
           files: {
             ...state.files,
-            [id]: { ...state.files[id], isDeleted: false },
+            [id]: { ...state.files[id], isClosed: false },
           },
           activeTabId: id,
           activeFileIds: [...state.activeFileIds, id],
@@ -78,7 +80,7 @@ export const useEditorStore = create<EditorState>()(
         set((state) => ({
           files: {
             ...state.files,
-            [id]: { ...state.files[id], isDeleted: true },
+            [id]: { ...state.files[id], isClosed: true },
           },
           // @todo open previous tab in the list, not first in the list.
           activeTabId: state.activeFileIds[0],

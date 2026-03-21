@@ -20,6 +20,7 @@ export const IDE = (props: IDEProps) => {
   const openModal = useModalStore((s) => s.openModal);
 
   // Helper to stop reload and inform user about potential data loss.
+  // @todo refactor hook to support multiple events.
   usePreventReload(() => openModal("RELOAD_CONFIRMATION"));
 
   return (

@@ -13,7 +13,7 @@ interface TabsMenuProps {
 /**
  * Menu schema for the tab's menu.
  */
-export const getMenuSchema = (focusedTabId?: TabsMenuProps["focusedTabId"]) => {
+export const useMenuSchema = (focusedTabId?: TabsMenuProps["focusedTabId"]) => {
   const {
     closeCurrentTab,
     closeOtherTabs,
@@ -98,7 +98,7 @@ export const getMenuSchema = (focusedTabId?: TabsMenuProps["focusedTabId"]) => {
 
 export const TabsMenu = ({ focusedTabId, children }: TabsMenuProps) => {
   return (
-    <MenuFromContext items={getMenuSchema(focusedTabId).items}>
+    <MenuFromContext items={useMenuSchema(focusedTabId).items}>
       {children}
     </MenuFromContext>
   );

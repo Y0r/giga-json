@@ -10,13 +10,14 @@ import {
 } from "react-icons/vsc";
 
 import { useFiles } from "@/feature/ide/hooks/useFiles";
-import { getMenuSchema as getTabsMenuSchema } from "@/feature/ide/components/Menu/TabsMenu";
+import { useMenuSchema as useTabsMenuSchema } from "@/feature/ide/components/Menu/TabsMenu";
 
 /**
  * Menu schema for the main menu.
  */
-export const getMenuSchema = () => {
+export const useMenuSchema = () => {
   const { createEmptyFile, createFromFile, saveFileAs } = useFiles();
+  const tabsMenuSchema = useTabsMenuSchema();
 
   return {
     orientation: "horizontal" as const,
@@ -97,7 +98,7 @@ export const getMenuSchema = () => {
           {
             label: "Editor Tabs",
             icon: null,
-            items: [...getTabsMenuSchema().items],
+            items: [...tabsMenuSchema.items],
           },
         ],
       },
@@ -106,5 +107,5 @@ export const getMenuSchema = () => {
 };
 
 export const MainMenu = () => {
-  return <Menu className={"c-main-menu"} menu={getMenuSchema()} />;
+  return <Menu className={"c-main-menu"} menu={useMenuSchema()} />;
 };
