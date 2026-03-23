@@ -1,7 +1,10 @@
 import React from "react";
 
-import { useModalStore } from "@/feature/modalManager/state/modal.store";
-import { usePreventReload } from "@/feature/ide/hooks/usePreventReload";
+import {
+  useReloadOverride,
+  useSaveAsOverride,
+  useSearchOverride,
+} from "@/feature/ide/services/shortcutSystem/overrides/overrides";
 
 import { StableLayout } from "@/shared/Layout/StableLayout";
 import { Layout } from "@/shared/Layout/Layout";
@@ -17,11 +20,8 @@ import "@/feature/ide/styles/ide.scss";
 interface IDEProps {}
 
 export const IDE = (props: IDEProps) => {
-  const openModal = useModalStore((s) => s.openModal);
-
-  // Helper to stop reload and inform user about potential data loss.
-  // @todo refactor hook to support multiple events.
-  usePreventReload(() => openModal("RELOAD_CONFIRMATION"));
+  // Override default shortcuts.
+  overrideShortcuts();
 
   return (
     <StableLayout className={"c-ide"}>
@@ -49,6 +49,20 @@ export const IDE = (props: IDEProps) => {
       <ModalManager />
     </StableLayout>
   );
+};
+
+/**
+ * Override default shortcuts using the shortcut system.
+ */
+const overrideShortcuts = () => {
+  // Skip reload on ctrl + r.
+  useReloadOverride();
+
+  // Skip save as on ctrl + s, trigger reformat instead.
+  useSaveAsOverride();
+
+  // Add search on double shift.
+  useSearchOverride();
 };
 
 export default IDE;
