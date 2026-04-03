@@ -1,6 +1,7 @@
 import * as prettier from "prettier/standalone";
-import parserBabel from "prettier/parser-babel";
-import parserYaml from "prettier/parser-yaml";
+import * as parserBabel from "prettier/plugins/babel";
+import * as parserYaml from "prettier/plugins/yaml";
+import * as parserEstree from "prettier/plugins/estree";
 
 /**
  * Service to handle code formatting using Prettier.
@@ -17,29 +18,26 @@ class FormattingService {
    * @returns The formatted code.
    */
   public async format(code: string, language: string): Promise<string> {
-    console.log("Formatting code... for language:" + language);
     const parser = this.getParser(language);
 
     if (!parser) {
-      console.warn(`No formatter available for language: ${language}`);
       return code;
     }
 
-    console.log("Parser:" + parser);
-
-    // try {
-    return await prettier.format(code, {
-      parser,
-      plugins: [parserBabel, parserYaml],
-      // Additional Prettier options can be configured here.
-      semi: true,
-      singleQuote: false,
-      tabWidth: 2,
-    });
-    // } catch (error) {
-    //   console.error("Formatting error:", error);
-    //   return code;
-    // }
+    try {
+      return await prettier.format(code, {
+        parser,
+        plugins: [parserBabel, parserYaml, parserEstree],
+        // Additional Prettier options can be configured here.
+        // @todo add prettier options per file type/lang type.
+        semi: true,
+        singleQuote: true,
+        tabWidth: 2,
+      });
+    } catch (error) {
+      console.error("Formatting error:", error);
+      return code;
+    }
   }
 
   /**

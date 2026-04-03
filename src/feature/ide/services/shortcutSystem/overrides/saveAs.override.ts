@@ -8,17 +8,24 @@ export const useSaveAsOverride = () => {
   const updateFile = useEditorStore((state) => state.updateFile);
 
   useShortcut(["ctrl", "s"], async () => {
-    console.log("Ctrl+S pressed: Save file");
     if (!activeTabId || !files[activeTabId]) return;
+    if (!files[activeTabId].hasUnformattedChanges) return;
 
-    const file = files[activeTabId];
-    const formattedContent = await formattingService.format(
-      file.content,
-      file.language,
-    );
-
-    if (formattedContent !== file.content) {
-      updateFile(activeTabId, { content: formattedContent });
+    try {
+      const file = files[activeTabId];
+      const formattedContent = await formattingService.format(
+        file.content,
+        file.language,
+      );
+      updateFile(activeTabId, {
+        content: formattedContent,
+        hasBeenUpdated: true,
+        hasUnformattedChanges: false,
+      });
+      return;
+    } catch (error) {
+      // @todo register an error with notification?
+      console.error("Failed to format file content", error);
     }
   });
 };
