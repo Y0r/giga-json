@@ -1,3 +1,6 @@
+import * as monaco from "monaco-editor";
+import { IPosition } from "monaco-editor";
+
 // Base interface for a file.
 // Defines the structure of a file object used in the IDE.
 export interface EditorFile {
@@ -10,14 +13,15 @@ export interface EditorFile {
   // Monaco state.
   path: string;
   language: string;
-  cursor: number;
   content: string;
-  // @todo use proper type.
-  viewState?: unknown;
+  cursor: IPosition;
+  viewState?: monaco.editor.ICodeEditorViewState;
 
   // File state.
   isClosed: boolean;
-  hasUnsavedChanges: boolean;
+  hasBeenUpdated?: boolean;
+  hasUnsavedChanges?: boolean;
+  hasUnformattedChanges?: boolean;
 }
 
 // Interface for the editor state.

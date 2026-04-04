@@ -1,7 +1,17 @@
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 
+import { EditorFile } from "@/feature/ide/state/ide.types";
 import { useEditorStore } from "@/feature/ide/state/ide.store";
 import debounce from "@/feature/ide/utils/debounce";
+
+import * as monaco from "monaco-editor";
+import { IPosition } from "monaco-editor";
 
 import {
   Editor as MonacoEditor,
@@ -30,7 +40,47 @@ export const Editor = (props: EditorProps) => {
     Record<string, monaco.editor.ITextModel>
   >({});
 
+  // Ref to accumulate changes before syncing to the global store.
+  const pendingChangesRef = useRef<Record<string, Partial<EditorFile>>>({});
+
   /**
+   * Commits pending changes for a specific file to the global store.
+   *
+   * @param id - The ID of the file to flush changes for.
+   */
+  const flushChanges = useCallback(
+    (id: string) => {
+      const changes = pendingChangesRef.current[id];
+      if (changes && Object.keys(changes).length > 0) {
+        updateFile(id, changes);
+        delete pendingChangesRef.current[id];
+      }
+    },
+    [updateFile],
+  );
+
+  /**
+   * Debounced version of flushChanges to provide a stable sync to the global store.
+   */
+  const debouncedFlush = useMemo(
+    () => debounce((id: string) => flushChanges(id), 500),
+    [flushChanges],
+  );
+
+  /**
+   * Ensures pending changes are flushed when switching tabs or unmounting.
+   */
+  useEffect(() => {
+    return () => {
+      if (activeTabId) {
+        flushChanges(activeTabId);
+      }
+    };
+  }, [activeTabId, flushChanges]);
+
+  /**
+   * ModelSyncEffect
+   *
    * This hook synchronizes the Monaco models with the files in the global store.
    * It uses an incremental approach (creating new ones and disposing of old ones)
    * to preserve the undo/redo stack and editor markers for existing tabs.
@@ -57,6 +107,15 @@ export const Editor = (props: EditorProps) => {
 
           nextModels[id] = model;
           hasChanged = true;
+        } else {
+          // If the model already exists, check if its content needs updating.
+          // This ensures that external changes (e.g., from formatting) are reflected.
+          if (file.hasBeenUpdated) {
+            const model = nextModels[id];
+            model.setValue(file.content);
+            // model.setPosition(file.cursor, "ModelSyncEffect");
+            updateFile(id, { hasBeenUpdated: false });
+          }
         }
       });
 
@@ -104,19 +163,43 @@ export const Editor = (props: EditorProps) => {
     // Set the active model in the editor.
     editor.setModel(model);
 
-    // Sync editor content back to the global store with a debounce.
-    const modifyModelContent = debounce((content: string) => {
-      updateFile(activeTabId, { content });
-    }, 500);
+    const onChangeCursor = editor.onDidChangeCursorPosition(
+      (event: monaco.editor.ICursorPositionChangedEvent) => {
+        // Skip the cursor update if the change was not caused by an explicit user action, undo, or redo.
+        const allowedReasons = [
+          monaco.editor.CursorChangeReason.Explicit,
+          monaco.editor.CursorChangeReason.Undo,
+          monaco.editor.CursorChangeReason.Redo,
+          monaco.editor.CursorChangeReason.Paste,
+        ];
 
-    const disposable = editor.onDidChangeModelContent(() => {
-      modifyModelContent(editor.getValue());
+        if (!allowedReasons.includes(event.reason)) {
+          return;
+        }
+
+        pendingChangesRef.current[activeTabId] = {
+          ...pendingChangesRef.current[activeTabId],
+          cursor: editor.getPosition() ?? undefined,
+        };
+        debouncedFlush(activeTabId);
+      },
+    );
+
+    const onChangeModel = editor.onDidChangeModelContent(() => {
+      pendingChangesRef.current[activeTabId] = {
+        ...pendingChangesRef.current[activeTabId],
+        content: editor.getValue(),
+        cursor: editor.getPosition() ?? undefined,
+        hasUnformattedChanges: true,
+      };
+      debouncedFlush(activeTabId);
     });
 
     return () => {
-      disposable.dispose();
+      onChangeCursor.dispose();
+      onChangeModel.dispose();
     };
-  }, [activeTabId, models, files, updateFile, openTab]);
+  }, [activeTabId, models, files, openTab, debouncedFlush, flushChanges]);
 
   /**
    * Ensures all Monaco models are disposed of when the Editor component is unmounted.
