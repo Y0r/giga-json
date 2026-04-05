@@ -16,12 +16,23 @@
   }
 
   .c-editor-tab {
+    display: flex;
+    align-items: center;
     width: fit-content;
     cursor: pointer;
     box-sizing: border-box;
     border: 1px solid transparent;
     padding: var(--chakra-spacing-1);
     padding-top: 0;
+
+    .c-editor-tab__unsaved-changes {
+      width: 0.5rem;
+      height: 0.5rem;
+      opacity: 0.2;
+      margin: 2px 0.1rem 0;
+      border-radius: var(--chakra-radii-full);
+      background-color: var(--chakra-colors-yellow-400);
+    }
 
     .c-editor-tab__close {
       visibility: hidden;
