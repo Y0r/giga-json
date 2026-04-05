@@ -41,4 +41,8 @@ export interface EditorState {
   reopenTab: (id: string) => void;
   closeTab: (id: string) => void;
   updateTabs: (updatedActiveFileIds: string[]) => void;
+
+  // Sync related actions.
+  flushPendingChanges: (id: string) => void;
+  setFlushPendingChanges: (flush: (id: string) => void) => void;
 }

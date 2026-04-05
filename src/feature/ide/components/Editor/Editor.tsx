@@ -11,13 +11,13 @@ import { useEditorStore } from "@/feature/ide/state/ide.store";
 import debounce from "@/feature/ide/utils/debounce";
 
 import * as monaco from "monaco-editor";
-import { IPosition } from "monaco-editor";
 
 import {
   Editor as MonacoEditor,
   EditorProps,
   Monaco,
 } from "@monaco-editor/react";
+import { IModelContentChangedEvent } from "monaco-editor/esm/vs/editor/editor.api";
 
 /**
  * Editor component for the IDE.
@@ -30,6 +30,9 @@ export const Editor = (props: EditorProps) => {
   // Hooks to work with global state.
   const openTab = useEditorStore((state) => state.openTab);
   const updateFile = useEditorStore((state) => state.updateFile);
+  const setFlushPendingChanges = useEditorStore(
+    (state) => state.setFlushPendingChanges,
+  );
 
   // Objects to contain instance of Monaco editor.
   const monacoRef = useRef<Monaco | null>(null);
@@ -71,12 +74,14 @@ export const Editor = (props: EditorProps) => {
    * Ensures pending changes are flushed when switching tabs or unmounting.
    */
   useEffect(() => {
+    setFlushPendingChanges(flushChanges);
+
     return () => {
       if (activeTabId) {
         flushChanges(activeTabId);
       }
     };
-  }, [activeTabId, flushChanges]);
+  }, [activeTabId, flushChanges, setFlushPendingChanges]);
 
   /**
    * ModelSyncEffect
@@ -111,8 +116,10 @@ export const Editor = (props: EditorProps) => {
           // If the model already exists, check if its content needs updating.
           // This ensures that external changes (e.g., from formatting) are reflected.
           if (file.hasBeenUpdated) {
+            console.log("Model has been updated with new values.");
             const model = nextModels[id];
             model.setValue(file.content);
+            // @todo update cursor position.
             // model.setPosition(file.cursor, "ModelSyncEffect");
             updateFile(id, { hasBeenUpdated: false });
           }
@@ -173,9 +180,13 @@ export const Editor = (props: EditorProps) => {
           monaco.editor.CursorChangeReason.Paste,
         ];
 
+        console.log("Model cursor position has changed.", event);
+
         if (!allowedReasons.includes(event.reason)) {
           return;
         }
+
+        console.log("Cursor change triggered a file change.", event);
 
         pendingChangesRef.current[activeTabId] = {
           ...pendingChangesRef.current[activeTabId],
@@ -185,15 +196,25 @@ export const Editor = (props: EditorProps) => {
       },
     );
 
-    const onChangeModel = editor.onDidChangeModelContent(() => {
-      pendingChangesRef.current[activeTabId] = {
-        ...pendingChangesRef.current[activeTabId],
-        content: editor.getValue(),
-        cursor: editor.getPosition() ?? undefined,
-        hasUnformattedChanges: true,
-      };
-      debouncedFlush(activeTabId);
-    });
+    const onChangeModel = editor.onDidChangeModelContent(
+      (event: IModelContentChangedEvent) => {
+        console.log("Model content has changed.", event);
+
+        if (event.isFlush) {
+          return;
+        }
+
+        console.log("Content change triggered a file change.", event);
+
+        pendingChangesRef.current[activeTabId] = {
+          ...pendingChangesRef.current[activeTabId],
+          content: editor.getValue(),
+          cursor: editor.getPosition() ?? undefined,
+          hasUnformattedChanges: true,
+        };
+        debouncedFlush(activeTabId);
+      },
+    );
 
     return () => {
       onChangeCursor.dispose();
