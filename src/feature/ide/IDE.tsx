@@ -19,6 +19,11 @@ import "@/feature/ide/styles/ide.scss";
 
 interface IDEProps {}
 
+/**
+ * IDE Component.
+ *
+ * This component serves as the main entry point for the IDE feature.
+ */
 export const IDE = (props: IDEProps) => {
   // Override default shortcuts.
   overrideShortcuts();

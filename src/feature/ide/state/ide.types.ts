@@ -42,7 +42,12 @@ export interface EditorState {
   closeTab: (id: string) => void;
   updateTabs: (updatedActiveFileIds: string[]) => void;
 
-  // Sync related actions.
+  /**
+   * Sync-related actions.
+   *
+   * `flushPendingChanges` provides a way for external components to ensure
+   * the local editor state is committed to the global store immediately.
+   */
   flushPendingChanges: (id: string) => void;
   setFlushPendingChanges: (flush: (id: string) => void) => void;
 }

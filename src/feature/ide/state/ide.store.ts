@@ -97,7 +97,10 @@ export const useEditorStore = create<EditorState>()(
           activeFileIds: [...updatedActiveFileIds],
         })),
 
-      // Sync related actions.
+      /**
+       * Sync actions are registered by the Editor component to allow
+       * external triggering of a state flush before critical tasks.
+       */
       flushPendingChanges: () => {},
       setFlushPendingChanges: (flush) => set({ flushPendingChanges: flush }),
     }),

@@ -17,10 +17,19 @@ import {
   EditorProps,
   Monaco,
 } from "@monaco-editor/react";
-import { IModelContentChangedEvent } from "monaco-editor/esm/vs/editor/editor.api";
+
+import { config } from "@/config";
 
 /**
  * Editor component for the IDE.
+ *
+ * Editor Sync Workflow:
+ * To handle high-frequency events (typing, cursor moves) without data loss,
+ * the IDE uses an Accumulator/Ref pattern in the Editor component.
+ * 1. Changes are collected in a local Ref (`pendingChangesRef`).
+ * 2. A debounced sync (500ms) merges these changes into the global `ide.store`.
+ * 3. Immediate "flushing" is triggered via `flushPendingChanges` during tab switches,
+ *    unmounting, or before critical actions (e.g., formatting on Ctrl+S).
  */
 export const Editor = (props: EditorProps) => {
   // Global-state variables.
