@@ -125,7 +125,10 @@ export const Editor = (props: EditorProps) => {
           // If the model already exists, check if its content needs updating.
           // This ensures that external changes (e.g., from formatting) are reflected.
           if (file.hasBeenUpdated) {
-            console.log("Model has been updated with new values.");
+            if (config.debugEditorEvents) {
+              console.log("Model has been updated with new values.");
+            }
+
             const model = nextModels[id];
             model.setValue(file.content);
             // @todo update cursor position.
@@ -170,6 +173,7 @@ export const Editor = (props: EditorProps) => {
       if (firstFileId && firstFileId !== activeTabId) {
         openTab(firstFileId);
 
+        // @todo register an error.
         const error = `Tried to open tab for ${activeTabId} file, but no model was found. Opening first available model instead.`;
         console.log(error);
       }
@@ -189,13 +193,17 @@ export const Editor = (props: EditorProps) => {
           monaco.editor.CursorChangeReason.Paste,
         ];
 
-        console.log("Model cursor position has changed.", event);
+        if (config.debugEditorEvents) {
+          console.log("Model cursor position has changed.", event);
+        }
 
         if (!allowedReasons.includes(event.reason)) {
           return;
         }
 
-        console.log("Cursor change triggered a file change.", event);
+        if (config.debugEditorEvents) {
+          console.log("Cursor change triggered a file change.", event);
+        }
 
         pendingChangesRef.current[activeTabId] = {
           ...pendingChangesRef.current[activeTabId],
@@ -206,14 +214,18 @@ export const Editor = (props: EditorProps) => {
     );
 
     const onChangeModel = editor.onDidChangeModelContent(
-      (event: IModelContentChangedEvent) => {
-        console.log("Model content has changed.", event);
+      (event: monaco.editor.IModelContentChangedEvent) => {
+        if (config.debugEditorEvents) {
+          console.log("Model content has changed.", event);
+        }
 
         if (event.isFlush) {
           return;
         }
 
-        console.log("Content change triggered a file change.", event);
+        if (config.debugEditorEvents) {
+          console.log("Content change triggered a file change.", event);
+        }
 
         pendingChangesRef.current[activeTabId] = {
           ...pendingChangesRef.current[activeTabId],

@@ -5,6 +5,7 @@ export const config = {
   dev: toBool(env.VITE_DEV),
   debugMode: toBool(env.VITE_DEBUG_MODE),
   debugFileCreation: toBool(env.VITE_DEBUG_FILE_CREATION),
+  debugEditorEvents: toBool(env.VITE_DEBUG_EDITOR_EVENTS),
   debugDisplayErrors: toBool(env.VITE_DEBUG_DISPLAY_ERRORS),
 };
 
