@@ -2,7 +2,13 @@ import { useShortcut } from "@/feature/ide/services/shortcutSystem/hooks/useShor
 import { useEditorStore } from "@/feature/ide/state/ide.store";
 import formattingService from "@/feature/ide/services/codeFormatting/FormattingService";
 
+import { config } from "@/config";
+
 export const useSaveAsOverride = () => {
+  if (!config.onShortcutPreventBrowserSaveAs) {
+    return;
+  }
+
   const activeTabId = useEditorStore((state) => state.activeTabId);
   const files = useEditorStore((state) => state.files);
   const updateFile = useEditorStore((state) => state.updateFile);
@@ -23,7 +29,6 @@ export const useSaveAsOverride = () => {
     if (!file || !file.hasUnformattedChanges) return;
 
     try {
-      console.log("Started code reformatting.");
       // @todo format code with calculation of the cursor position.
       const formattedContent = await formattingService.format(
         file.content,

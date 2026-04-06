@@ -14,17 +14,16 @@ import { Logo } from "@/shared/Identica/Logo";
 import { MainMenu } from "@/feature/ide/components/Menu/MainMenu";
 import { Editor, EditorTabs } from "@/feature/ide/components";
 import { ModalManager } from "@/feature/modalManager/ModalManager";
+import { config } from "@/config";
 
 import "@/feature/ide/styles/ide.scss";
-
-interface IDEProps {}
 
 /**
  * IDE Component.
  *
  * This component serves as the main entry point for the IDE feature.
  */
-export const IDE = (props: IDEProps) => {
+export const IDE = () => {
   // Override default shortcuts.
   overrideShortcuts();
 
@@ -60,12 +59,14 @@ export const IDE = (props: IDEProps) => {
  * Override default shortcuts using the shortcut system.
  */
 const overrideShortcuts = () => {
+  if (!config.onShortcutPreventAll) {
+    return;
+  }
+
   // Skip reload on ctrl + r.
   useReloadOverride();
-
   // Skip save as on ctrl + s, trigger reformat instead.
   useSaveAsOverride();
-
   // Add search on double shift.
   useSearchOverride();
 };

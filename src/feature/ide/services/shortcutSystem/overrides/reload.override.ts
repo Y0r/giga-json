@@ -2,7 +2,13 @@ import { useModalStore } from "@/feature/modalManager/state/modal.store";
 import { useShortcut } from "@/feature/ide/services/shortcutSystem/hooks/useShortcut";
 import { useEffect } from "react";
 
+import { config } from "@/config";
+
 export const useReloadOverride = () => {
+  if (!config.onShortcutPreventBrowserReload) {
+    return;
+  }
+
   const openModal = useModalStore((s) => s.openModal);
 
   // F5.

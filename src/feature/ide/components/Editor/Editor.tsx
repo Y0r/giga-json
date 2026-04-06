@@ -75,7 +75,7 @@ export const Editor = (props: EditorProps) => {
    * Debounced version of flushChanges to provide a stable sync to the global store.
    */
   const debouncedFlush = useMemo(
-    () => debounce((id: string) => flushChanges(id), 500),
+    () => debounce((id: string) => flushChanges(id), config.changesSyncDelay),
     [flushChanges],
   );
 
