@@ -70,6 +70,8 @@ export const getLanguage = (filename: string, mimeType: string): string => {
     ts: "typescript",
     tsx: "typescript",
     json: "json",
+    json5: "json5",
+    jsonc: "jsonc",
     html: "html",
     htm: "html",
     css: "css",

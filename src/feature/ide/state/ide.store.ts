@@ -96,7 +96,22 @@ export const useEditorStore = create<EditorState>()(
           // Otherwise, change will not propagate to other components.
           activeFileIds: [...updatedActiveFileIds],
         })),
+
+      /**
+       * Sync actions are registered by the Editor component to allow
+       * external triggering of a state flush before critical tasks.
+       */
+      flushPendingChanges: () => {},
+      setFlushPendingChanges: (flush) => set({ flushPendingChanges: flush }),
     }),
-    { name: "editor-store" },
+    {
+      name: "editor-store",
+      // Exclude sync-related functions and actions from persistence.
+      // These functions are transient and cannot be serialized to JSON.
+      partialize: (state) => {
+        const { flushPendingChanges, setFlushPendingChanges, ...rest } = state;
+        return rest;
+      },
+    },
   ),
 );

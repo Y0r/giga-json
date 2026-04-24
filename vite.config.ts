@@ -8,6 +8,7 @@ import tsconfigPaths from "vite-tsconfig-paths";
 export default defineConfig({
   root: "src",
   envDir: "..",
+  envPrefix: ["VITE_", "IDE_"],
   plugins: [react(), tsconfigPaths()],
   build: {
     outDir: "../dist",

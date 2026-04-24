@@ -134,7 +134,11 @@ export const EditorTabs = (props: EditorTabsProps) => {
                             icon={<VscJson />}
                             isActive={file.id === activeTabId}
                             isCloseable={true}
-                            hasUnsavedChanges={file.hasUnsavedChanges}
+                            hasUnsavedChanges={
+                              file.hasUnsavedChanges ||
+                              file.hasUnformattedChanges ||
+                              false
+                            }
                             onClick={handleOpen}
                             onClose={handleClose}
                           />

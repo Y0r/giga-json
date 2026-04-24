@@ -92,7 +92,7 @@ export const EditorTab = ({
       </Text>
 
       {hasUnsavedChanges && (
-        <div className={"c-editor-tab__unsaved-changes"}>!</div>
+        <div className={"c-editor-tab__unsaved-changes"}></div>
       )}
 
       {isCloseable && (
