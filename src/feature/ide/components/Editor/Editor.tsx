@@ -18,6 +18,8 @@ import {
   Monaco,
 } from "@monaco-editor/react";
 
+import { useMonacoCursor } from "@/feature/ide/hooks/useMonacoCursor";
+
 import { config } from "@/config";
 
 /**
@@ -42,6 +44,9 @@ export const Editor = (props: EditorProps) => {
   const setFlushPendingChanges = useEditorStore(
     (state) => state.setFlushPendingChanges,
   );
+
+  // Helpers to work with Monaco.
+  const { getOffsetFromPosition, getPositionFromOffset } = useMonacoCursor();
 
   // Objects to contain instance of Monaco editor.
   const monacoRef = useRef<Monaco | null>(null);
@@ -111,17 +116,7 @@ export const Editor = (props: EditorProps) => {
       // Loop through the files and create models for each.
       // Skip if the model exists and dispose of it if a file was removed.
       Object.entries(files).forEach(([id, file]) => {
-        if (!nextModels[id]) {
-          const uri = monaco.Uri.parse(file.path);
-          let model = monaco.editor.getModel(uri);
-
-          if (!model) {
-            model = monaco.editor.createModel(file.content, file.language, uri);
-          }
-
-          nextModels[id] = model;
-          hasChanged = true;
-        } else {
+        if (nextModels[id]) {
           // If the model already exists, check if its content needs updating.
           // This ensures that external changes (e.g., from formatting) are reflected.
           if (file.hasBeenUpdated) {
@@ -131,10 +126,31 @@ export const Editor = (props: EditorProps) => {
 
             const model = nextModels[id];
             model.setValue(file.content);
-            // @todo update cursor position.
-            // model.setPosition(file.cursor, "ModelSyncEffect");
-            updateFile(id, { hasBeenUpdated: false });
+
+            const newPosition = getPositionFromOffset(model, file.cursorOffset);
+
+            updateFile(id, {
+              cursor: newPosition,
+              hasBeenUpdated: false,
+            });
+
+            if (editorRef.current && id === activeTabId) {
+              editorRef.current.setPosition(newPosition);
+              editorRef.current.revealPositionInCenterIfOutsideViewport(
+                newPosition,
+              );
+            }
           }
+        } else {
+          const uri = monaco.Uri.parse(file.path);
+          let model = monaco.editor.getModel(uri);
+
+          if (!model) {
+            model = monaco.editor.createModel(file.content, file.language, uri);
+          }
+
+          nextModels[id] = model;
+          hasChanged = true;
         }
       });
 
@@ -149,7 +165,7 @@ export const Editor = (props: EditorProps) => {
 
       return hasChanged ? nextModels : prevModels;
     });
-  }, [isInitialised, files]);
+  }, [isInitialised, files, activeTabId, getPositionFromOffset, updateFile]);
 
   /**
    * This hook manages the active model in the editor and synchronizes content changes.
@@ -205,10 +221,15 @@ export const Editor = (props: EditorProps) => {
           console.log("Cursor change triggered a file change.", event);
         }
 
+        const position = editor.getPosition();
+        const positionOffset = getOffsetFromPosition(model, position);
+
         pendingChangesRef.current[activeTabId] = {
           ...pendingChangesRef.current[activeTabId],
-          cursor: editor.getPosition() ?? undefined,
+          cursor: position,
+          cursorOffset: positionOffset,
         };
+
         debouncedFlush(activeTabId);
       },
     );
@@ -227,10 +248,14 @@ export const Editor = (props: EditorProps) => {
           console.log("Content change triggered a file change.", event);
         }
 
+        const position = editor.getPosition();
+        const positionOffset = getOffsetFromPosition(model, position);
+
         pendingChangesRef.current[activeTabId] = {
           ...pendingChangesRef.current[activeTabId],
           content: editor.getValue(),
-          cursor: editor.getPosition() ?? undefined,
+          cursor: position,
+          cursorOffset: positionOffset,
           hasUnformattedChanges: true,
         };
         debouncedFlush(activeTabId);
@@ -241,7 +266,15 @@ export const Editor = (props: EditorProps) => {
       onChangeCursor.dispose();
       onChangeModel.dispose();
     };
-  }, [activeTabId, models, files, openTab, debouncedFlush, flushChanges]);
+  }, [
+    activeTabId,
+    models,
+    files,
+    openTab,
+    debouncedFlush,
+    flushChanges,
+    getOffsetFromPosition,
+  ]);
 
   /**
    * Ensures all Monaco models are disposed of when the Editor component is unmounted.

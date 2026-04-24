@@ -5,10 +5,6 @@ import formattingService from "@/feature/ide/services/codeFormatting/FormattingS
 import { config } from "@/config";
 
 export const useSaveAsOverride = () => {
-  if (!config.onShortcutPreventBrowserSaveAs) {
-    return;
-  }
-
   const activeTabId = useEditorStore((state) => state.activeTabId);
   const files = useEditorStore((state) => state.files);
   const updateFile = useEditorStore((state) => state.updateFile);
@@ -17,6 +13,10 @@ export const useSaveAsOverride = () => {
   );
 
   useShortcut(["ctrl", "s"], async () => {
+    if (!config.onShortcutPreventBrowserSaveAs) {
+      return;
+    }
+
     if (!activeTabId || !files[activeTabId]) return;
 
     // Ensure all pending changes in the editor are flushed to the store before formatting.
@@ -29,20 +29,24 @@ export const useSaveAsOverride = () => {
     if (!file || !file.hasUnformattedChanges) return;
 
     try {
-      // @todo format code with calculation of the cursor position.
-      const formattedContent = await formattingService.format(
+      const { code, cursorOffset } = await formattingService.formatWithCursor(
         file.content,
         file.language,
+        file.cursorOffset,
       );
 
       updateFile(activeTabId, {
-        content: formattedContent,
+        content: code,
+        cursorOffset: cursorOffset,
+        cursor: null,
         hasBeenUpdated: true,
         hasUnformattedChanges: false,
       });
+
       return;
     } catch (error) {
       // @todo register an error with notification?
+      // @todo should we skip this error?
       console.error("Failed to format file content", error);
     }
   });
