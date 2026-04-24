@@ -14,7 +14,8 @@ export interface EditorFile {
   path: string;
   language: string;
   content: string;
-  cursor: IPosition;
+  cursor: IPosition | null;
+  cursorOffset: number;
   viewState?: monaco.editor.ICodeEditorViewState;
 
   // File state.
