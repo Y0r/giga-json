@@ -1,8 +1,19 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeAll, afterAll } from "vitest";
 import { formattingService } from "./FormattingService";
 import { config } from "@/config";
 
 describe("FormattingService", () => {
+  let originalEnabled: boolean;
+
+  beforeAll(() => {
+    originalEnabled = config.codeFormattingEnabled;
+    config.codeFormattingEnabled = true;
+  });
+
+  afterAll(() => {
+    config.codeFormattingEnabled = originalEnabled;
+  });
+
   describe("format", () => {
     it("should format code without cursor", async () => {
       const code = '{"a":1}';
@@ -14,7 +25,7 @@ describe("FormattingService", () => {
     });
 
     it("should format YAML code", async () => {
-      const code = "a: 1\nb: 2";
+      const code = "a:  1\nb:  2";
       const language = "yaml";
 
       const formatted = await formattingService.format(code, language);
