@@ -27,16 +27,24 @@ import { shortcutService } from "@/feature/ide/services/shortcutSystem/ShortcutS
 export const useShortcut = (
   keys: string[],
   action: () => void,
-  options: { isDoublePress?: boolean } = {},
+  options: { isDoublePress?: boolean; enabled?: boolean } = {},
 ) => {
+  const { enabled = true, isDoublePress } = options;
   const actionRef = useRef(action);
-  actionRef.current = action;
 
   useEffect(() => {
+    actionRef.current = action;
+  });
+
+  useEffect(() => {
+    if (!enabled) {
+      return;
+    }
+
     return shortcutService.register({
       keys,
       action: () => actionRef.current(),
-      isDoublePress: options.isDoublePress,
+      isDoublePress,
     });
-  }, [keys, options.isDoublePress]);
+  }, [keys, isDoublePress, enabled]);
 };

@@ -5,20 +5,28 @@ import { useEffect } from "react";
 import { config } from "@/config";
 
 export const useReloadOverride = () => {
-  if (!config.onShortcutPreventBrowserReload) {
-    return;
-  }
-
+  const isEnabled =
+    config.onShortcutPreventAll && config.onShortcutPreventBrowserReload;
   const openModal = useModalStore((s) => s.openModal);
 
   // F5.
-  useShortcut(["f5"], () => openModal("RELOAD_CONFIRMATION"));
+  useShortcut(["f5"], () => openModal("RELOAD_CONFIRMATION"), {
+    enabled: isEnabled,
+  });
 
   // Ctrl+R or Cmd+R.
-  useShortcut(["ctrl", "r"], () => openModal("RELOAD_CONFIRMATION"));
-  useShortcut(["meta", "r"], () => openModal("RELOAD_CONFIRMATION"));
+  useShortcut(["ctrl", "r"], () => openModal("RELOAD_CONFIRMATION"), {
+    enabled: isEnabled,
+  });
+  useShortcut(["meta", "r"], () => openModal("RELOAD_CONFIRMATION"), {
+    enabled: isEnabled,
+  });
 
   useEffect(() => {
+    if (!isEnabled) {
+      return;
+    }
+
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
       event.preventDefault();
       event.returnValue = true;
@@ -29,5 +37,5 @@ export const useReloadOverride = () => {
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
     };
-  }, []);
+  }, [isEnabled]);
 };
