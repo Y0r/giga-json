@@ -10,7 +10,7 @@ import { EditorFile } from "@/feature/ide/state/ide.types";
 import { useEditorStore } from "@/feature/ide/state/ide.store";
 import debounce from "@/feature/ide/utils/debounce";
 
-import * as monaco from "monaco-editor";
+import type * as monaco from "monaco-editor";
 
 import {
   Editor as MonacoEditor,
@@ -203,10 +203,10 @@ export const Editor = (props: EditorProps) => {
       (event: monaco.editor.ICursorPositionChangedEvent) => {
         // Skip the cursor update if the change was not caused by an explicit user action, undo, or redo.
         const allowedReasons = [
-          monaco.editor.CursorChangeReason.Explicit,
-          monaco.editor.CursorChangeReason.Undo,
-          monaco.editor.CursorChangeReason.Redo,
-          monaco.editor.CursorChangeReason.Paste,
+          monacoRef.current!.editor.CursorChangeReason.Explicit,
+          monacoRef.current!.editor.CursorChangeReason.Undo,
+          monacoRef.current!.editor.CursorChangeReason.Redo,
+          monacoRef.current!.editor.CursorChangeReason.Paste,
         ];
 
         if (config.debugEditorEvents) {

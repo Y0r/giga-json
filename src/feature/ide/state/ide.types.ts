@@ -1,5 +1,5 @@
-import * as monaco from "monaco-editor";
-import { IPosition } from "monaco-editor";
+import type * as monaco from "monaco-editor";
+import type { IPosition } from "monaco-editor";
 
 // Base interface for a file.
 // Defines the structure of a file object used in the IDE.
