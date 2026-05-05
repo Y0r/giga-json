@@ -27,7 +27,7 @@ export const config = {
     env.IDE_CODE_FORMATTING_DEFAULT_USE_TABS,
   ),
   codeFormattingDefaultTabWidth:
-    parseInt(env.IDE_CODE_FORMATTING_DEFAULT_TAB_WIDTH) ?? 2,
+    Number.parseInt(env.IDE_CODE_FORMATTING_DEFAULT_TAB_WIDTH) ?? 2,
   codeFormattingDefaultSingleQuote: toBool(
     env.IDE_CODE_FORMATTING_DEFAULT_SINGLE_QUOTE,
   ),

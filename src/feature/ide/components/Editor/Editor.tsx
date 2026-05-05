@@ -1,10 +1,4 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { EditorFile } from "@/feature/ide/state/ide.types";
 import { useEditorStore } from "@/feature/ide/state/ide.store";
@@ -33,7 +27,7 @@ import { config } from "@/config";
  * 3. Immediate "flushing" is triggered via `flushPendingChanges` during tab switches,
  *    unmounting, or before critical actions (e.g., formatting on Ctrl+S).
  */
-export const Editor = (props: EditorProps) => {
+export const Editor = (_props: EditorProps) => {
   // Global-state variables.
   const files = useEditorStore((state) => state.files);
   const activeTabId = useEditorStore((state) => state.activeTabId);

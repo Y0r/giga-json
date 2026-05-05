@@ -14,7 +14,6 @@ import { Logo } from "@/shared/Identica/Logo";
 import { MainMenu } from "@/feature/ide/components/Menu/MainMenu";
 import { Editor, EditorTabs } from "@/feature/ide/components";
 import { ModalManager } from "@/feature/modalManager/ModalManager";
-import { config } from "@/config";
 
 import "@/feature/ide/styles/ide.scss";
 

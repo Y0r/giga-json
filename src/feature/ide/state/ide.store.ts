@@ -57,7 +57,7 @@ export const useEditorStore = create<EditorState>()(
 
       // Open a file in the editor state.
       openTab: (id: string) =>
-        set((state) => ({
+        set(() => ({
           activeTabId: id,
         })),
 
@@ -91,7 +91,7 @@ export const useEditorStore = create<EditorState>()(
       // Update all active file ids in the editor state.
       // Note: to not use this method to add or remove items.
       updateTabs: (updatedActiveFileIds: string[]) =>
-        set((state) => ({
+        set(() => ({
           // Destruct and create a new array to avoid mutating the original array.
           // Otherwise, change will not propagate to other components.
           activeFileIds: [...updatedActiveFileIds],
@@ -109,7 +109,11 @@ export const useEditorStore = create<EditorState>()(
       // Exclude sync-related functions and actions from persistence.
       // These functions are transient and cannot be serialized to JSON.
       partialize: (state) => {
-        const { flushPendingChanges, setFlushPendingChanges, ...rest } = state;
+        const {
+          flushPendingChanges: _flush,
+          setFlushPendingChanges: _setFlush,
+          ...rest
+        } = state;
         return rest;
       },
     },
