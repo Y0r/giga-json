@@ -79,10 +79,14 @@ export const Editor = (props: EditorProps) => {
   /**
    * Debounced version of flushChanges to provide a stable sync to the global store.
    */
-  const debouncedFlush = useMemo(
-    () => debounce((id: string) => flushChanges(id), config.changesSyncDelay),
-    [flushChanges],
-  );
+  const debouncedFlushRef = useRef<((id: string) => void) | null>(null);
+  useEffect(() => {
+    debouncedFlushRef.current = debounce(flushChanges, config.changesSyncDelay);
+  }, [flushChanges]);
+
+  const debouncedFlush = useCallback((id: string) => {
+    debouncedFlushRef.current?.(id);
+  }, []);
 
   /**
    * Ensures pending changes are flushed when switching tabs or unmounting.
