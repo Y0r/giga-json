@@ -3,9 +3,8 @@ import { useShortcut } from "@/feature/ide/services/shortcutSystem/hooks/useShor
 import { config } from "@/config";
 
 export const useSearchOverride = () => {
-  if (!config.onShortcutPreventEditorSearch) {
-    return;
-  }
+  const isEnabled =
+    config.onShortcutPreventAll && config.onShortcutPreventEditorSearch;
 
   useShortcut(
     ["shift"],
@@ -13,6 +12,6 @@ export const useSearchOverride = () => {
       // @todo implement search modal trigger.
       console.log("Double Shift pressed: Open Search Modal");
     },
-    { isDoublePress: true },
+    { isDoublePress: true, enabled: isEnabled },
   );
 };

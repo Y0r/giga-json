@@ -7,6 +7,9 @@ import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 
 export default tseslint.config(
+  {
+    ignores: ["dist"],
+  },
   // Base configurations
   js.configs.recommended,
   ...tseslint.configs.recommended,
@@ -15,6 +18,11 @@ export default tseslint.config(
 
   // Global settings and rule overrides
   {
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
     languageOptions: {
       globals: {
         ...globals.browser,
@@ -65,7 +73,11 @@ export default tseslint.config(
       // Downgrade some strict TS rules to warnings or turn them off for now to make CI pass.
       "@typescript-eslint/no-unused-vars": [
         "warn",
-        { argsIgnorePattern: "^_" },
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+          caughtErrorsIgnorePattern: "^_",
+        },
       ],
       "@typescript-eslint/no-empty-object-type": "off",
       "@typescript-eslint/no-explicit-any": "warn",

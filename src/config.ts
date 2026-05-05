@@ -2,7 +2,7 @@ const env = import.meta.env;
 
 export const config = {
   appName: env.VITE_APP_NAME ?? "giga_json",
-  dev: toBool(env.VITE_DEV),
+  dev: toBool(env.VITE_DEV, true),
   // Debug variables.
   debugMode: toBool(env.VITE_DEBUG_MODE),
   debugFileCreation: toBool(env.VITE_DEBUG_FILE_CREATION),
@@ -11,28 +11,33 @@ export const config = {
   // Editor variables.
   changesSyncDelay: env.IDE_CHANGES_SYNC_DELAY ?? "500",
   // Shortcut variables.
-  onShortcutPreventAll: toBool(env.IDE_ON_SHORTCUT_PREVENT_ALL),
+  onShortcutPreventAll: toBool(env.IDE_ON_SHORTCUT_PREVENT_ALL, true),
   onShortcutPreventBrowserReload: toBool(
     env.IDE_ON_SHORTCUT_PREVENT_BROWSER_RELOAD,
+    true,
   ),
   onShortcutPreventBrowserSaveAs: toBool(
     env.IDE_ON_SHORTCUT_PREVENT_BROWSER_SAVE_AS,
+    true,
   ),
   onShortcutPreventEditorSearch: toBool(
     env.IDE_ON_SHORTCUT_PREVENT_EDITOR_SEARCH,
+    true,
   ),
   // Code formatting variables.
-  codeFormattingEnabled: toBool(env.IDE_CODE_FORMATTING_ENABLED),
+  codeFormattingEnabled: toBool(env.IDE_CODE_FORMATTING_ENABLED, true),
   codeFormattingDefaultUseTabs: toBool(
     env.IDE_CODE_FORMATTING_DEFAULT_USE_TABS,
   ),
   codeFormattingDefaultTabWidth:
-    parseInt(env.IDE_CODE_FORMATTING_DEFAULT_TAB_WIDTH) ?? 2,
+    Number.parseInt(env.IDE_CODE_FORMATTING_DEFAULT_TAB_WIDTH) || 2,
   codeFormattingDefaultSingleQuote: toBool(
     env.IDE_CODE_FORMATTING_DEFAULT_SINGLE_QUOTE,
+    true,
   ),
   codeFormattingDefaultSemicolons: toBool(
     env.IDE_CODE_FORMATTING_DEFAULT_SEMICOLONS,
+    true,
   ),
   codeFormattingDefaultTrailingComma: toTrailingComma(
     env.IDE_CODE_FORMATTING_DEFAULT_TRAILING_COMMA,
@@ -42,8 +47,9 @@ export const config = {
 /**
  * Converts a string to a boolean value.
  */
-function toBool(value: string) {
-  if (!value) return false;
+function toBool(value: string | undefined, defaultValue: boolean = false) {
+  if (value === undefined || value === null || value === "")
+    return defaultValue;
 
   value = value.trim().toLowerCase();
   return value === "true";

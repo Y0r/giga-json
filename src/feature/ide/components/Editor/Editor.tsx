@@ -1,16 +1,10 @@
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 
 import { EditorFile } from "@/feature/ide/state/ide.types";
 import { useEditorStore } from "@/feature/ide/state/ide.store";
 import debounce from "@/feature/ide/utils/debounce";
 
-import * as monaco from "monaco-editor";
+import type * as monaco from "monaco-editor";
 
 import {
   Editor as MonacoEditor,
@@ -33,7 +27,7 @@ import { config } from "@/config";
  * 3. Immediate "flushing" is triggered via `flushPendingChanges` during tab switches,
  *    unmounting, or before critical actions (e.g., formatting on Ctrl+S).
  */
-export const Editor = (props: EditorProps) => {
+export const Editor = (_props: EditorProps) => {
   // Global-state variables.
   const files = useEditorStore((state) => state.files);
   const activeTabId = useEditorStore((state) => state.activeTabId);
@@ -79,10 +73,14 @@ export const Editor = (props: EditorProps) => {
   /**
    * Debounced version of flushChanges to provide a stable sync to the global store.
    */
-  const debouncedFlush = useMemo(
-    () => debounce((id: string) => flushChanges(id), config.changesSyncDelay),
-    [flushChanges],
-  );
+  const debouncedFlushRef = useRef<((id: string) => void) | null>(null);
+  useEffect(() => {
+    debouncedFlushRef.current = debounce(flushChanges, config.changesSyncDelay);
+  }, [flushChanges]);
+
+  const debouncedFlush = useCallback((id: string) => {
+    debouncedFlushRef.current?.(id);
+  }, []);
 
   /**
    * Ensures pending changes are flushed when switching tabs or unmounting.
@@ -203,10 +201,10 @@ export const Editor = (props: EditorProps) => {
       (event: monaco.editor.ICursorPositionChangedEvent) => {
         // Skip the cursor update if the change was not caused by an explicit user action, undo, or redo.
         const allowedReasons = [
-          monaco.editor.CursorChangeReason.Explicit,
-          monaco.editor.CursorChangeReason.Undo,
-          monaco.editor.CursorChangeReason.Redo,
-          monaco.editor.CursorChangeReason.Paste,
+          monacoRef.current!.editor.CursorChangeReason.Explicit,
+          monacoRef.current!.editor.CursorChangeReason.Undo,
+          monacoRef.current!.editor.CursorChangeReason.Redo,
+          monacoRef.current!.editor.CursorChangeReason.Paste,
         ];
 
         if (config.debugEditorEvents) {

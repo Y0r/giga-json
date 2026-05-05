@@ -14,7 +14,6 @@ import { Logo } from "@/shared/Identica/Logo";
 import { MainMenu } from "@/feature/ide/components/Menu/MainMenu";
 import { Editor, EditorTabs } from "@/feature/ide/components";
 import { ModalManager } from "@/feature/modalManager/ModalManager";
-import { config } from "@/config";
 
 import "@/feature/ide/styles/ide.scss";
 
@@ -25,7 +24,7 @@ import "@/feature/ide/styles/ide.scss";
  */
 export const IDE = () => {
   // Override default shortcuts.
-  overrideShortcuts();
+  useOverrideShortcuts();
 
   return (
     <StableLayout className={"c-ide"}>
@@ -58,11 +57,7 @@ export const IDE = () => {
 /**
  * Override default shortcuts using the shortcut system.
  */
-const overrideShortcuts = () => {
-  if (!config.onShortcutPreventAll) {
-    return;
-  }
-
+const useOverrideShortcuts = () => {
   // Skip reload on ctrl + r.
   useReloadOverride();
   // Skip save as on ctrl + s, trigger reformat instead.

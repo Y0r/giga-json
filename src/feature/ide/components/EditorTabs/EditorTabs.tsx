@@ -1,7 +1,12 @@
 import React, { useEffect, useMemo } from "react";
 
 import { Flex } from "@chakra-ui/react";
-import { DragDropContext, Draggable, Droppable } from "@hello-pangea/dnd";
+import {
+  DragDropContext,
+  Draggable,
+  Droppable,
+  DropResult,
+} from "@hello-pangea/dnd";
 import { VscJson } from "react-icons/vsc";
 
 import EditorTab from "@/feature/ide/components/EditorTabs/EditorTab";
@@ -22,7 +27,7 @@ interface EditorTabsProps {
 /**
  * Editor tabs component for the IDE.
  */
-export const EditorTabs = (props: EditorTabsProps) => {
+export const EditorTabs = (_props: EditorTabsProps) => {
   // Data retrieval.
   const activeFileIds = useEditorStore((state) => state.activeFileIds);
   const files = useEditorStore((state) => state.files);
@@ -45,7 +50,7 @@ export const EditorTabs = (props: EditorTabsProps) => {
     if (!activeTabId && activeFileIds.length > 0) {
       openTab(activeFileIds[0]);
     }
-  }, [activeTabId]);
+  }, [activeTabId, activeFileIds, openTab]);
 
   /**
    * Open tab handler.
@@ -72,7 +77,7 @@ export const EditorTabs = (props: EditorTabsProps) => {
    *
    * @param result - The drag and drop result object.
    */
-  const handleDrag = (result: any) => {
+  const handleDrag = (result: DropResult) => {
     const { source, destination } = result;
 
     // Skip processing if the user dropped the item back where it came from.
@@ -103,7 +108,7 @@ export const EditorTabs = (props: EditorTabsProps) => {
             {(droppableProvider) => (
               <Flex
                 role={"navigation"}
-                className={classNames("c-editor-tabs", props.className)}
+                className={classNames("c-editor-tabs", _props.className)}
                 direction={"row"}
                 justify={"flex-start"}
                 flexWrap={"nowrap"}

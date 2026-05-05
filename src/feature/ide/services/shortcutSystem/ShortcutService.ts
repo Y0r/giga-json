@@ -122,19 +122,27 @@ class ShortcutService {
 
     // Add the actual key if it's not already in the list (as a modifier)
     const modifierKeys = ["control", "shift", "alt", "meta"];
-    if (!modifierKeys.includes(key)) {
-      keys.push(key);
-    } else {
+    if (modifierKeys.includes(key)) {
       // If only a modifier is pressed, event.key will be "Control", "Shift", etc.
       // We already added "ctrl", "shift", etc. based on the boolean flags.
       // To avoid duplicates and keep it consistent:
-      if (key === "control" && !keys.includes("ctrl")) keys.push("ctrl");
-      if (key === "shift" && !keys.includes("shift")) keys.push("shift");
-      if (key === "alt" && !keys.includes("alt")) keys.push("alt");
-      if (key === "meta" && !keys.includes("meta")) keys.push("meta");
+      if (key === "control" && !keys.includes("ctrl")) {
+        keys.push("ctrl");
+      }
+      if (key === "shift" && !keys.includes("shift")) {
+        keys.push("shift");
+      }
+      if (key === "alt" && !keys.includes("alt")) {
+        keys.push("alt");
+      }
+      if (key === "meta" && !keys.includes("meta")) {
+        keys.push("meta");
+      }
+    } else {
+      keys.push(key);
     }
 
-    return Array.from(new Set(keys));
+    return [...new Set(keys)];
   }
 }
 
