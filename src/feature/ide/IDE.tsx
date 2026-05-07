@@ -15,6 +15,7 @@ import { MainMenu } from "@/feature/ide/components/Menu/MainMenu";
 import { Editor, EditorTabs } from "@/feature/ide/components";
 import { ModalManager } from "@/feature/modalManager/ModalManager";
 
+import { IDE_SELECTORS } from "@/feature/ide/constants";
 import "@/feature/ide/styles/ide.scss";
 
 /**
@@ -27,23 +28,23 @@ export const IDE = () => {
   useOverrideShortcuts();
 
   return (
-    <StableLayout className={"c-ide"}>
-      <Layout className={"c-ide-heading"}>
+    <StableLayout className={IDE_SELECTORS.container}>
+      <Layout className={IDE_SELECTORS.heading}>
         <Flex alignItems={"center"} alignContent={"center"} gap={3} pb={1}>
           <Logo />
           <MainMenu />
         </Flex>
       </Layout>
 
-      <StableLayout className={"c-ide__content"}>
+      <Layout className={IDE_SELECTORS.content}>
         {/* @todo add wrapper to allow orientation change. */}
         <EditorTabs />
         <Editor />
 
         {/* @todo render left sidebar */}
-      </StableLayout>
+      </Layout>
 
-      <Layout className={"c-ide-footer"}>
+      <Layout className={IDE_SELECTORS.footer}>
         {/* @todo display file path in footer. */}
         {/* @todo render goto-line widget */}
       </Layout>

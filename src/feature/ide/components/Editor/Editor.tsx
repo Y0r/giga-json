@@ -13,6 +13,7 @@ import {
 } from "@monaco-editor/react";
 
 import { useMonacoCursor } from "@/feature/ide/hooks/useMonacoCursor";
+import { useEditorDynamicHeight } from "@/feature/ide/hooks/useEditorDynamicHeight";
 
 import { config } from "@/config";
 
@@ -45,8 +46,10 @@ export const Editor = (_props: EditorProps) => {
   // Objects to contain instance of Monaco editor.
   const monacoRef = useRef<Monaco | null>(null);
   const editorRef = useRef<monaco.editor.IStandaloneCodeEditor | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const [isInitialised, setIsInitialised] = useState(false);
+  const editorHeight = useEditorDynamicHeight(containerRef);
   const [models, setModels] = useState<
     Record<string, monaco.editor.ITextModel>
   >({});
@@ -287,19 +290,21 @@ export const Editor = (_props: EditorProps) => {
   }, []);
 
   return (
-    <MonacoEditor
-      width={"100%"}
-      height={"85vh"}
-      theme={"vs-dark"}
-      onMount={useCallback(
-        (editor: monaco.editor.IStandaloneCodeEditor, monaco: Monaco) => {
-          editorRef.current = editor;
-          monacoRef.current = monaco;
-          setIsInitialised(true);
-        },
-        [],
-      )}
-    />
+    <div ref={containerRef} style={{ width: "100%" }}>
+      <MonacoEditor
+        width={"100%"}
+        height={editorHeight}
+        theme={"vs-dark"}
+        onMount={useCallback(
+          (editor: monaco.editor.IStandaloneCodeEditor, monaco: Monaco) => {
+            editorRef.current = editor;
+            monacoRef.current = monaco;
+            setIsInitialised(true);
+          },
+          [],
+        )}
+      />
+    </div>
   );
 };
 
