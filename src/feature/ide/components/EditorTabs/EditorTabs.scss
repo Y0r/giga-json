@@ -1,10 +1,10 @@
 .c-editor-tabs {
-  padding: var(--chakra-spacing-1) var(--chakra-spacing-2);
+  padding: var(--gson-spacing-1) var(--gson-spacing-2);
 
-  border: 1px solid var(--chakra-colors-gray-900);
-  border-top-left-radius: var(--chakra-radii-lg);
-  border-top-right-radius: var(--chakra-radii-lg);
-  background-color: var(--chakra-colors-gray-900);
+  border: 1px solid var(--gson-color-background-primary-contrast);
+  border-top-left-radius: var(--gson-radius-container);
+  border-top-right-radius: var(--gson-radius-container);
+  background-color: var(--gson-color-background-primary-contrast);
 
   /* Hide scrollbar for IE, Edge and Firefox */
   -ms-overflow-style: none; /* IE and Edge */
@@ -22,7 +22,7 @@
     cursor: pointer;
     box-sizing: border-box;
     border: 1px solid transparent;
-    padding: var(--chakra-spacing-1);
+    padding: var(--gson-spacing-1);
     padding-top: 0;
 
     .c-editor-tab__unsaved-changes {
@@ -30,8 +30,8 @@
       height: 0.5rem;
       opacity: 0.2;
       margin: 2px 0.1rem 0;
-      border-radius: var(--chakra-radii-full);
-      background-color: var(--chakra-colors-yellow-400);
+      border-radius: var(--gson-radius-full);
+      background-color: var(--gson-color-warning);
     }
 
     .c-editor-tab__close {
@@ -39,12 +39,11 @@
       cursor: pointer;
     }
 
-    // Show close icon on hover / for active tab.
     &__active,
     &:hover {
-      border: 1px solid var(--chakra-colors-gray-500);
-      border-radius: var(--chakra-radii-md);
-      background-color: var(--chakra-colors-gray-900);
+      border: 1px solid var(--gson-color-background-primary-contrast-outline);
+      border-radius: var(--gson-radius-item);
+      background-color: var(--gson-color-background-primary-contrast);
 
       .c-editor-tab__close {
         visibility: visible;
@@ -52,7 +51,9 @@
         // Highlight closing icon background on hover.
         &:hover {
           svg {
-            background-color: var(--chakra-colors-gray-700);
+            background-color: var(
+              --gson-color-background-primary-contrast-active
+            );
           }
         }
       }
