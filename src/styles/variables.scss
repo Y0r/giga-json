@@ -1,0 +1,30 @@
+:root {
+  /* Colors */
+  --gson-color-white: var(--chakra-colors-white);
+  --gson-color-black: var(--chakra-colors-black);
+
+  --gson-color-background-primary: var(--chakra-colors-gray-800);
+  --gson-color-background-primary-active: var(--chakra-colors-gray-600);
+  --gson-color-background-primary-outline: var(--chakra-colors-gray-400);
+  --gson-color-background-primary-contrast: var(--chakra-colors-gray-900);
+  --gson-color-background-primary-contrast-active: var(
+    --chakra-colors-gray-700
+  );
+  --gson-color-background-primary-contrast-outline: var(
+    --chakra-colors-gray-500
+  );
+
+  --gson-color-success: var(--chakra-colors-green-400);
+  --gson-color-warning: var(--chakra-colors-yellow-400);
+  --gson-color-error: var(--chakra-colors-red-400);
+
+  /* Spacing */
+  --gson-spacing-1: var(--chakra-spacing-1);
+  --gson-spacing-2: var(--chakra-spacing-2);
+  --gson-spacing-6: var(--chakra-spacing-6);
+
+  /* Radii */
+  --gson-radius-item: var(--chakra-radii-md);
+  --gson-radius-container: var(--chakra-radii-lg);
+  --gson-radius-full: var(--chakra-radii-full);
+}
