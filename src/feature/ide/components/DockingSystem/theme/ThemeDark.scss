@@ -1,0 +1,49 @@
+.dockview-gson-dark {
+  /* Main background colors */
+  --dv-group-view-background-color: var(
+    --gson-color-background-primary-contrast
+  );
+  --dv-tabs-and-actions-container-background-color: var(
+    --gson-color-background-primary
+  );
+
+  //--dv-group-view-background-color: red;
+  //--dv-tabs-and-actions-container-background-color: blue;
+  //--dv-background-color: blue;
+
+  /* Tab Colors */
+  --dv-tab-color: var(--gson-color-white);
+
+  /* Active Group Tab Colors */
+  --dv-activegroup-visiblepanel-tab-background-color: var(
+    --gson-color-background-primary-active
+  );
+  --dv-activegroup-hiddenpanel-tab-background-color: var(
+    --gson-color-background-primary
+  );
+
+  /* Inactive Group Tab Colors */
+  --dv-inactivegroup-visiblepanel-tab-background-color: var(
+    --gson-color-background-primary-active
+  );
+  --dv-inactivegroup-hiddenpanel-tab-background-color: var(
+    --gson-color-background-primary
+  );
+
+  /* Borders and Separators */
+  //--dv-separator-border: var(--gson-color-background-primary-contrast-outline);
+  --dv-tab-divider-color: var(--gson-color-background-primary);
+  --dv-paneview-header-border-color: var(
+    --gson-color-background-primary-outline
+  );
+
+  /* Drag and Drop */
+  --dv-drag-over-background-color: rgba(83, 89, 93, 0.5);
+
+  /* Icons */
+  --dv-icon-hover-background-color: var(--gson-color-background-primary-active);
+
+  /* Others */
+  --dv-tabs-and-actions-container-height: var(--gson-spacing-6);
+  --dv-tabs-and-actions-container-font-size: 13px;
+}
