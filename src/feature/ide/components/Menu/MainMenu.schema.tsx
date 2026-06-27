@@ -10,13 +10,17 @@ import {
 
 import { useFiles } from "@/feature/ide/hooks/useFiles";
 import { useMenuSchema as useTabsMenuSchema } from "@/feature/ide/components/Menu/TabsMenu.schema";
+import { useMenuSchema as useToolsWindowsMenuSchema } from "@/feature/ide/components/Menu/ToolsWindowsMenu.schema";
+
+import { Menu } from "@/shared/Menu/state/menu.types";
 
 /**
  * Menu schema for the main menu.
  */
-export const useMenuSchema = () => {
+export const useMenuSchema = (): Menu => {
   const { createEmptyFile, createFromFile, saveFileAs } = useFiles();
   const tabsMenuSchema = useTabsMenuSchema();
+  const toolsWindowsMenuSchema = useToolsWindowsMenuSchema();
 
   return {
     orientation: "horizontal" as const,
@@ -87,6 +91,32 @@ export const useMenuSchema = () => {
               type: "callback" as const,
               onClick: () => console.log("Paste"),
             },
+          },
+        ],
+      },
+      {
+        label: "View",
+        icon: null,
+        items: [
+          {
+            label: "Tool Windows",
+            icon: null,
+            items: [...toolsWindowsMenuSchema.items],
+          },
+          {
+            label: "Appearance",
+            icon: null,
+            items: [
+              {
+                label: "Status Bar",
+                icon: null,
+                action: {
+                  type: "callback" as const,
+                  // @todo toggle of bottom panel of dock system.
+                  onClick: () => console.log("Show/Hide status bar"),
+                },
+              },
+            ],
           },
         ],
       },
