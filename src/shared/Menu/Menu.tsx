@@ -27,8 +27,8 @@ export const Menu: React.FC<MenuRootProps> = ({ className, menu }) => {
       flexDirection={orientation === "horizontal" ? "row" : "column"}
       gap={orientation === "horizontal" ? 0 : 1}
     >
-      {[...items]
-        .sort((a, b) => (a.weight ?? 0) - (b.weight ?? 0))
+      {items
+        .toSorted((a, b) => (a.weight ?? 0) - (b.weight ?? 0))
         .map((item, index) => (
           <MenuItem key={item.label || `sep-${index}`} item={item} />
         ))}

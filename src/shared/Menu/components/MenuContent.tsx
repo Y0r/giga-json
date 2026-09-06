@@ -17,8 +17,8 @@ export const MenuContent: React.FC<MenuContentProps> = ({ items }) => {
     <Portal>
       <Menu.Positioner>
         <Menu.Content>
-          {[...items]
-            .sort((a, b) => (a.weight ?? 0) - (b.weight ?? 0))
+          {items
+            .toSorted((a, b) => (a.weight ?? 0) - (b.weight ?? 0))
             .map((item, index) => {
               if (item.type === "separator") {
                 return <Menu.Separator key={`sep-${index}`} />;
