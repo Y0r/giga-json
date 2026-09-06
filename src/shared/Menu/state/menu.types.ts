@@ -57,4 +57,6 @@ export type MenuItem = {
   items?: MenuItem[];
   /** Whether the item is interactive. */
   disabled?: boolean;
+  /** Sort weight for the item. */
+  weight?: number;
 };

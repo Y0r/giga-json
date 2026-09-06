@@ -17,36 +17,38 @@ export const MenuContent: React.FC<MenuContentProps> = ({ items }) => {
     <Portal>
       <Menu.Positioner>
         <Menu.Content>
-          {items.map((item, index) => {
-            if (item.type === "separator") {
-              return <Menu.Separator key={`sep-${index}`} />;
-            }
+          {[...items]
+            .sort((a, b) => (a.weight ?? 0) - (b.weight ?? 0))
+            .map((item, index) => {
+              if (item.type === "separator") {
+                return <Menu.Separator key={`sep-${index}`} />;
+              }
 
-            const hasSubmenu = item.items && item.items.length > 0;
+              const hasSubmenu = item.items && item.items.length > 0;
 
-            if (hasSubmenu) {
+              if (hasSubmenu) {
+                return (
+                  <Menu.Root
+                    key={`${item.label}-${index}`}
+                    positioning={{
+                      placement: "right-start",
+                      gutter: 2,
+                    }}
+                  >
+                    <MenuTrigger item={item} isNested />
+                    <MenuContent items={item.items!} />
+                  </Menu.Root>
+                );
+              }
+
               return (
-                <Menu.Root
+                <MenuTrigger
                   key={`${item.label}-${index}`}
-                  positioning={{
-                    placement: "right-start",
-                    gutter: 2,
-                  }}
-                >
-                  <MenuTrigger item={item} isNested />
-                  <MenuContent items={item.items!} />
-                </Menu.Root>
+                  item={item}
+                  isNested
+                />
               );
-            }
-
-            return (
-              <MenuTrigger
-                key={`${item.label}-${index}`}
-                item={item}
-                isNested
-              />
-            );
-          })}
+            })}
         </Menu.Content>
       </Menu.Positioner>
     </Portal>

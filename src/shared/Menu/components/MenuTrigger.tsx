@@ -75,7 +75,7 @@ export const MenuTrigger: React.FC<MenuTriggerProps> = ({
     const className = classNames({ "has-submenu": hasSubmenu });
     if (hasSubmenu) {
       return (
-        <Menu.TriggerItem className={className}>
+        <Menu.TriggerItem className={className} disabled={disabled}>
           {content}
           <LuChevronRight />
         </Menu.TriggerItem>
