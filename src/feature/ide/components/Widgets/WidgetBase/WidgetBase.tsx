@@ -48,8 +48,8 @@ export const WidgetBase: React.FC<WidgetBaseProps> = (properties) => {
 
         <Flex className={"c-dock-widget__interaction-items"}>
           {properties.toolbar &&
-            [...properties.toolbar]
-              .sort((a, b) => (a.weight ?? 0) - (b.weight ?? 0))
+            properties.toolbar
+              .toSorted((a, b) => (a.weight ?? 0) - (b.weight ?? 0))
               .map((item, index) => (
                 <WidgetInteractionItem
                   key={index}

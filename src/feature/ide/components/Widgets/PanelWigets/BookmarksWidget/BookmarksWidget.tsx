@@ -5,9 +5,7 @@ import { Text } from "@chakra-ui/react";
 
 import type { DockPanelParams } from "@/feature/ide/components/DockingSystem/state/dock.types";
 import { DockPanel } from "@/feature/ide/components/DockingSystem/DockPanel";
-import { useDockStore } from "@/feature/ide/components/DockingSystem/state/dock.store";
 import WidgetBase from "@/feature/ide/components/Widgets/WidgetBase/WidgetBase";
-import { BiSolidSearch } from "react-icons/bi";
 import { VscExpandAll, VscSearch } from "react-icons/vsc";
 
 /**

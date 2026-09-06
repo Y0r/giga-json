@@ -1,7 +1,7 @@
 import React from "react";
 import classnames from "classnames";
 
-import { VscCheck, VscChevronRight, VscKebabVertical } from "react-icons/vsc";
+import { VscKebabVertical } from "react-icons/vsc";
 import { useDockStore } from "@/feature/ide/components/DockingSystem/state/dock.store";
 import { DockviewPanelApi } from "dockview-react";
 import { WidgetInteractionItemProps } from "./WidgetBase.types";
@@ -57,8 +57,8 @@ export const WidgetContextualMenu: React.FC<WidgetContextualMenuProps> = ({
       weight: 999,
     },
     ...(actions
-      ? [...actions]
-          .sort((a, b) => (a.weight ?? 0) - (b.weight ?? 0))
+      ? actions
+          .toSorted((a, b) => (a.weight ?? 0) - (b.weight ?? 0))
           .map((item) => ({
             label: item.label,
             icon: item.icon ? <item.icon /> : undefined,
