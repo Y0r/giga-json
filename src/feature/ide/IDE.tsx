@@ -13,10 +13,13 @@ import { Flex } from "@chakra-ui/react";
 import { Logo } from "@/shared/Identica/Logo";
 import { MainMenu } from "@/feature/ide/components/Menu/MainMenu";
 import { Editor, EditorTabs } from "@/feature/ide/components";
+import { Dock } from "@/feature/ide/components/DockingSystem/Dock";
+import { DOCK_COMPONENTS } from "@/feature/ide/components/DockingSystem/DockWidgets";
+
 import { ModalManager } from "@/feature/modalManager/ModalManager";
 
 import { IDE_SELECTORS } from "@/feature/ide/constants";
-import "@/feature/ide/styles/ide.scss";
+import "./IDE.scss";
 
 /**
  * IDE Component.
@@ -29,20 +32,24 @@ export const IDE = () => {
 
   return (
     <StableLayout className={IDE_SELECTORS.container}>
-      <Layout className={IDE_SELECTORS.heading}>
+      <Layout
+        className={IDE_SELECTORS.heading}
+        style={{ padding: "0 var(--gson-spacing-6)" }}
+      >
         <Flex alignItems={"center"} alignContent={"center"} gap={3} pb={1}>
           <Logo />
           <MainMenu />
         </Flex>
       </Layout>
 
-      <Layout className={IDE_SELECTORS.content}>
-        {/* @todo add wrapper to allow orientation change. */}
-        <EditorTabs />
-        <Editor />
-
-        {/* @todo render left sidebar */}
-      </Layout>
+      {/* @todo resolve problem with height. */}
+      <Dock components={DOCK_COMPONENTS}>
+        <div className={IDE_SELECTORS.content}>
+          {/* @todo add wrapper to allow orientation change. */}
+          <EditorTabs />
+          <Editor />
+        </div>
+      </Dock>
 
       <Layout className={IDE_SELECTORS.footer}>
         {/* @todo display file path in footer. */}

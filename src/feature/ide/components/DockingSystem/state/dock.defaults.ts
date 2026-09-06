@@ -11,29 +11,31 @@ export const DEFAULT_DOCK_SETTINGS: DockSettings = {
       id: "left",
       position: "left",
       options: { collapsed: true },
+      weight: 10,
     },
     right: {
       id: "right",
       position: "right",
       options: { collapsed: true },
+      weight: 20,
     },
   },
   widgets: {
     tree: {
-      id: "json-tree",
-      component: "default",
+      id: "tree",
+      component: "tree",
       tabComponent: "default",
       groupId: "left",
       params: {
         title: "JSON Tree",
         description: "Shows the JSON data as a tree structure.",
         icon: "vsc-list-tree",
-        isOpened: true,
       },
+      weight: 10,
     },
     bookmarks: {
       id: "bookmarks",
-      component: "default",
+      component: "bookmarks",
       tabComponent: "default",
       groupId: "left",
       params: {
@@ -41,10 +43,11 @@ export const DEFAULT_DOCK_SETTINGS: DockSettings = {
         description: "A list of bookmarked lines.",
         icon: "vsc-bookmark",
       },
+      weight: 20,
     },
     notifications: {
       id: "notifications",
-      component: "default",
+      component: "notifications",
       tabComponent: "default",
       groupId: "right",
       params: {
@@ -52,6 +55,7 @@ export const DEFAULT_DOCK_SETTINGS: DockSettings = {
         description: "A list of notifications from the IDE.",
         icon: "vsc-bell",
       },
+      weight: 10,
     },
   },
 };

@@ -1,29 +1,23 @@
 import React from "react";
-import { IDockviewPanelProps } from "dockview-react";
-import { Text } from "@chakra-ui/react";
-import classNames from "classnames";
 
-import type { DockPanelParams } from "@/feature/ide/components/DockingSystem/state/dock.types";
+type DockPanelProps = {
+  title: string;
+  description: string;
+  children?: React.ReactNode;
+};
 
 /**
- * Panel base component for the Panels.
+ * Shared panel wrapper — provides the structural c-panel container.
+ * Each widget composes this and adds its own WidgetBase / content inside.
  */
-export const DockPanel = (props: IDockviewPanelProps<DockPanelParams>) => {
-  // @todo remove console.log;
-  // console.log("DockPanel props", props);
-
+export const DockPanel: React.FC<DockPanelProps> = ({
+  title,
+  description,
+  children,
+}) => {
   return (
-    <div
-      className={classNames("c-panel", {
-        "c-panel__active": props.params.isOpened,
-      })}
-      title={`${props.params.title} - ${props.params.description}`}
-    >
-      <div className="c-panel-header">
-        <Text>{props.params.title}</Text>
-        {/* https://chakra-ui.com/docs/components/toggle-tip */}
-      </div>
-      <div className="c-panel-content"></div>
+    <div className="c-panel" title={`${title} - ${description}`}>
+      {children}
     </div>
   );
 };

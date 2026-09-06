@@ -8,7 +8,7 @@ export type DockIconKey = string;
 
 // ─── Group Types ────────────────────────────────────────────
 
-/** Only left and right edge groups are supported. */
+/** Left and right edge groups are supported. */
 export type DockGroupPosition = "left" | "right";
 
 /**
@@ -22,6 +22,8 @@ export interface DockGroupOptions {
   maximumSize?: number;
   collapsedSize?: number;
   collapsed?: boolean;
+  locked?: boolean | "no-drop" | "no-drag";
+  hideHeader?: boolean;
 }
 
 /** A dock edge group definition. */
@@ -29,6 +31,7 @@ export interface DockGroup {
   id: string;
   position: DockGroupPosition;
   options: DockGroupOptions;
+  weight?: number;
 }
 
 // ─── Widget Param Types ─────────────────────────────────────
@@ -40,7 +43,6 @@ export interface DockGroup {
 export interface DockPanelParams {
   title: string;
   description: string;
-  isOpened: boolean;
 }
 
 /**
@@ -51,8 +53,6 @@ export interface DockTabParams {
   title: string;
   description: string;
   icon: DockIconKey;
-  isOpened?: boolean;
-  isDeleted?: boolean;
 }
 
 /**
@@ -64,17 +64,21 @@ export interface DockWidgetParams {
   title: string;
   description: string;
   icon: DockIconKey;
-  isOpened?: boolean;
-  isDeleted?: boolean;
 }
 
 // ─── Widget Types ───────────────────────────────────────────
+/**
+ * Options for a single widget.
+ */
+export interface DockWidgetOptions {
+  draggable?: boolean;
+}
 
 /**
  * Component nickname — maps to a key in `DockviewReact.components`.
  * Extend this union as new panel renderers are added.
  */
-export type DockWidgetComponent = "default";
+export type DockWidgetComponent = "tree" | "bookmarks" | "notifications";
 
 /**
  * Tab component nickname — maps to a key in `DockviewReact.tabComponents`.
@@ -90,6 +94,8 @@ export interface DockWidget {
   /** Which group this widget belongs to (by group id). */
   groupId: string;
   params: DockWidgetParams;
+  options?: DockWidgetOptions;
+  weight?: number;
 }
 
 // ─── Settings ───────────────────────────────────────────────
@@ -101,22 +107,16 @@ export interface DockSettings {
 }
 
 // ─── Store State ────────────────────────────────────────────
-type DockWidgetStateProperty = keyof Pick<
-  DockWidgetParams,
-  "isOpened" | "isDeleted"
->;
-
 export interface DockState {
   /** Current dock settings (groups + widgets). */
   settings: DockSettings;
   /** Reset all settings to defaults. */
   resetSettings: () => void;
-  /** Show / hide or delete a widget. */
-  changeWidgetState: (
-    widgetId: string,
-    property: DockWidgetStateProperty,
-    value: boolean,
-  ) => void;
   /** Move a widget to a different group. */
   moveWidget: (widgetId: string, targetGroupId: string) => void;
+  /** Change options for a group (like collapsed state) */
+  changeGroupState: (
+    groupId: string,
+    options: Partial<DockGroupOptions>,
+  ) => void;
 }
