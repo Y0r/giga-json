@@ -13,12 +13,16 @@
   --gson-color-background-primary-contrast-outline: var(
     --chakra-colors-gray-500
   );
+  --gson-color-background-primary-contrast-semitransparent: var(
+    --chakra-colors-gray-800
+  );
 
   --gson-color-success: var(--chakra-colors-green-400);
   --gson-color-warning: var(--chakra-colors-yellow-400);
   --gson-color-error: var(--chakra-colors-red-400);
 
   /* Spacing */
+  --gson-spacing-0: 2px;
   --gson-spacing-1: var(--chakra-spacing-1);
   --gson-spacing-2: var(--chakra-spacing-2);
   --gson-spacing-6: var(--chakra-spacing-6);
