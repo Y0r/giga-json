@@ -2,6 +2,7 @@ import React from "react";
 import { VscGithub } from "react-icons/vsc";
 import { useTabs } from "@/feature/ide/hooks/useTabs";
 import { EditorFile } from "@/feature/ide/state/ide.types";
+import { Menu } from "@/shared/Menu/state/menu.types";
 
 interface TabsMenuSchemaProps {
   focusedTabId?: EditorFile["id"];
@@ -12,7 +13,7 @@ interface TabsMenuSchemaProps {
  */
 export const useMenuSchema = (
   focusedTabId?: TabsMenuSchemaProps["focusedTabId"],
-) => {
+): Menu => {
   const {
     closeCurrentTab,
     closeOtherTabs,

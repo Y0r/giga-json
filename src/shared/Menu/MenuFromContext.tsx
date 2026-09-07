@@ -19,7 +19,7 @@ export const MenuFromContext: React.FC<ContextMenuProps> = ({
   items,
 }) => {
   return (
-    <Menu.Root positioning={{ placement: "bottom-start" }}>
+    <Menu.Root>
       <Menu.ContextTrigger asChild>{children}</Menu.ContextTrigger>
       <MenuContent items={items} />
     </Menu.Root>

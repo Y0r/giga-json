@@ -52,6 +52,13 @@ export const EditorTab = ({
     onClose(fileId);
   };
 
+  /**
+   * Simple handler to open the editor tab on right click.
+   */
+  const handleContextMenu = () => {
+    onClick(fileId);
+  };
+
   return (
     <Flex
       role={"tab"}
@@ -70,6 +77,7 @@ export const EditorTab = ({
       alignItems={"end"}
       gap={1}
       onClick={handleClick}
+      onContextMenu={handleContextMenu}
       onKeyDown={(event) => {
         if (event.key === "Enter") {
           handleClick(event);

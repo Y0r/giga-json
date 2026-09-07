@@ -41,6 +41,8 @@ export type MenuItemAction =
  * Represents an individual entry in a menu.
  */
 export type MenuItem = {
+  /** Unique identifier for the item. */
+  id?: string;
   /** The type of the item. Defaults to "item". */
   type?: "item" | "separator";
   /** The text label of the item. Required if type is "item". */
@@ -57,4 +59,8 @@ export type MenuItem = {
   items?: MenuItem[];
   /** Whether the item is interactive. */
   disabled?: boolean;
+  /** Sort weight for the item. */
+  weight?: number;
+  /** Whether the item is checked. */
+  checked?: boolean;
 };

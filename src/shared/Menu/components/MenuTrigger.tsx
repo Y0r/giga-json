@@ -2,9 +2,10 @@ import React from "react";
 
 import { Button, Flex, Kbd, Menu } from "@chakra-ui/react";
 import { MenuItem as MenuItemType } from "@/shared/Menu/state/menu.types";
-import { LuChevronRight } from "react-icons/lu";
+import { LuCheck, LuChevronRight } from "react-icons/lu";
 
 import classNames from "classnames";
+import "./MenuTrigger.scss";
 
 interface MenuTriggerProps {
   /** The menu item configuration. */
@@ -29,6 +30,7 @@ export const MenuTrigger: React.FC<MenuTriggerProps> = ({
     action,
     disabled,
     items,
+    checked,
   } = item;
   const hasSubmenu = items && items.length > 0;
 
@@ -48,7 +50,9 @@ export const MenuTrigger: React.FC<MenuTriggerProps> = ({
   const content = (
     <>
       <Flex
-        className={"menu-label"}
+        className={classNames("menu-label", {
+          "menu-label__check_indicator": checked,
+        })}
         justify={"flex-start"}
         flexWrap={"nowrap"}
         alignItems={"center"}
@@ -59,6 +63,13 @@ export const MenuTrigger: React.FC<MenuTriggerProps> = ({
         {iconBefore && <span className="menu-icon-before">{iconBefore}</span>}
         {label}
         {iconAfter && <span className="menu-icon-after">{iconAfter}</span>}
+
+        {/* Render the check icon if the item is checked. */}
+        {checked && (
+          <span className={"menu-icon-status"}>
+            {<LuCheck className="menu-check" />}
+          </span>
+        )}
       </Flex>
 
       {/* Render shortcut if available.*/}
@@ -72,10 +83,14 @@ export const MenuTrigger: React.FC<MenuTriggerProps> = ({
 
   // If nested in a submenu
   if (isNested) {
-    const className = classNames({ "has-submenu": hasSubmenu });
+    const className = classNames("menu-trigger", { "has-submenu": hasSubmenu });
     if (hasSubmenu) {
       return (
-        <Menu.TriggerItem className={className}>
+        <Menu.TriggerItem
+          className={className}
+          disabled={disabled}
+          onClick={handleClick}
+        >
           {content}
           <LuChevronRight />
         </Menu.TriggerItem>
@@ -95,6 +110,7 @@ export const MenuTrigger: React.FC<MenuTriggerProps> = ({
   }
 
   const buttonProps = {
+    className: "menu-trigger",
     variant: "ghost" as const,
     size: "sm" as const,
     disabled,

@@ -1,0 +1,7 @@
+.c-widget-interaction-item {
+  background-color: inherit;
+
+  &:hover {
+    background-color: var(--gson-color-background-primary-active);
+  }
+}
