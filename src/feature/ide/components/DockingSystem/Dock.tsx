@@ -105,56 +105,13 @@ export const Dock: React.FC<DockProps> = ({ children, components }) => {
         });
       });
 
-    // Add widgets as panels.
-    Object.values(initialSettings.widgets)
-      .filter((widget) => components[widget.component])
-      .toSorted((a, b) => (a.weight ?? 0) - (b.weight ?? 0))
-      .forEach((widget) => {
-        let referenceGroup = widget.groupId;
-
-        // Fallback if the group doesn't exist or is invalid (e.g. stale 'bottom' group from previous session)
-        const group = initialSettings.groups[referenceGroup];
-        if (
-          !group ||
-          (group.position !== "left" && group.position !== "right")
-        ) {
-          referenceGroup =
-            DEFAULT_DOCK_SETTINGS.widgets[widget.id]?.groupId ??
-            Object.keys(initialSettings.groups).find(
-              (id) =>
-                initialSettings.groups[id].position === "left" ||
-                initialSettings.groups[id].position === "right",
-            ) ??
-            "left";
-
-          // Update the store to fix the corrupted state
-          setTimeout(() => {
-            useDockStore.getState().moveWidget(widget.id, referenceGroup);
-          }, 0);
-        }
-
-        const panel = event.api.addPanel({
-          id: widget.id,
-          component: widget.component,
-          tabComponent: widget.tabComponent,
-          position: { referenceGroup },
-          minimumWidth: 200,
-          params: {
-            ...widget.params,
-            // Resolve icon string key to ReactNode for the tab component.
-            icon: resolveDockIcon(widget.params.icon),
-          },
-        });
-
-        panel.api.onDidGroupChange(() => {
-          const currentGroupId =
-            useDockStore.getState().settings.widgets[widget.id]?.groupId;
-          const newGroupId = panel.group.id;
-          if (newGroupId && currentGroupId !== newGroupId) {
-            useDockStore.getState().moveWidget(widget.id, newGroupId);
-          }
-        });
-      });
+    event.api.onDidRemovePanel((panel) => {
+      const widgetId = panel.id;
+      const widget = useDockStore.getState().settings.widgets[widgetId];
+      if (widget && !widget.hidden) {
+        useDockStore.getState().toggleWidget(widgetId, true);
+      }
+    });
 
     setApi(event.api);
   };
@@ -178,17 +135,73 @@ export const Dock: React.FC<DockProps> = ({ children, components }) => {
     // Sync widget state
     Object.values(settings.widgets).forEach((widget) => {
       const panel = api.getPanel(widget.id);
+
+      if (widget.hidden) {
+        if (panel) {
+          panel.api.close();
+        }
+        return;
+      }
+
+      if (!panel && components[widget.component]) {
+        let referenceGroup = widget.groupId;
+
+        // Fallback if the group doesn't exist or is invalid (e.g. stale 'bottom' group from previous session)
+        const group = settings.groups[referenceGroup];
+        if (
+          !group ||
+          (group.position !== "left" && group.position !== "right")
+        ) {
+          referenceGroup =
+            DEFAULT_DOCK_SETTINGS.widgets[widget.id]?.groupId ??
+            Object.keys(settings.groups).find(
+              (id) =>
+                settings.groups[id].position === "left" ||
+                settings.groups[id].position === "right",
+            ) ??
+            "left";
+
+          // Update the store to fix the corrupted state
+          setTimeout(() => {
+            useDockStore.getState().moveWidget(widget.id, referenceGroup);
+          }, 0);
+        }
+
+        const newPanel = api.addPanel({
+          id: widget.id,
+          component: widget.component,
+          tabComponent: widget.tabComponent,
+          position: { referenceGroup },
+          minimumWidth: 200,
+          params: {
+            ...widget.params,
+            // Resolve icon string key to ReactNode for the tab component.
+            icon: resolveDockIcon(widget.params.icon),
+          },
+        });
+
+        newPanel.api.onDidGroupChange(() => {
+          const currentGroupId =
+            useDockStore.getState().settings.widgets[widget.id]?.groupId;
+          const newGroupId = newPanel.group.id;
+          if (newGroupId && currentGroupId !== newGroupId) {
+            useDockStore.getState().moveWidget(widget.id, newGroupId);
+          }
+        });
+        return;
+      }
+
       if (panel) {
         // Sync position (move to a different group if needed)
         if (panel.group && panel.group.id !== widget.groupId) {
           const targetGroup = api.getGroup(widget.groupId);
           if (targetGroup) {
-            panel.api.moveTo({ group: targetGroup as any });
+            panel.api.moveTo({ group: targetGroup });
           }
         }
       }
     });
-  }, [api, settings]);
+  }, [api, settings, components]);
 
   const WatermarkComponent = React.useCallback(
     () => <>{children}</>,
@@ -202,12 +215,14 @@ export const Dock: React.FC<DockProps> = ({ children, components }) => {
   };
 
   return (
-    <DockviewReact
-      theme={theme}
-      onReady={onReady}
-      components={components}
-      tabComponents={{ default: DockTab }}
-      watermarkComponent={WatermarkComponent}
-    />
+    <div style={{ height: "100%", width: "100%" }}>
+      <DockviewReact
+        theme={theme}
+        onReady={onReady}
+        components={components}
+        tabComponents={{ default: DockTab }}
+        watermarkComponent={WatermarkComponent}
+      />
+    </div>
   );
 };

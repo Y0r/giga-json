@@ -27,6 +27,24 @@ export const useDockStore = create<DockState>()(
             },
           };
         }),
+      toggleWidget: (widgetId, hidden) =>
+        set((state) => {
+          const widget = state.settings.widgets[widgetId];
+          if (!widget) return state;
+
+          return {
+            settings: {
+              ...state.settings,
+              widgets: {
+                ...state.settings.widgets,
+                [widgetId]: {
+                  ...widget,
+                  hidden: hidden ?? !widget.hidden,
+                },
+              },
+            },
+          };
+        }),
       changeGroupState: (groupId, options) =>
         set((state) => {
           const group = state.settings.groups[groupId];

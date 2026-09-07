@@ -1,0 +1,12 @@
+.menu-trigger {
+  .menu-label {
+    &.menu-label__check_indicator {
+      width: 100%;
+      margin: 0;
+
+      .menu-icon-status {
+        margin-left: auto;
+      }
+    }
+  }
+}

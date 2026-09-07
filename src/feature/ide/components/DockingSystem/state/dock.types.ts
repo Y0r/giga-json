@@ -96,6 +96,8 @@ export interface DockWidget {
   params: DockWidgetParams;
   options?: DockWidgetOptions;
   weight?: number;
+  /** Whether the widget is currently visible in the dock. */
+  hidden?: boolean;
 }
 
 // ─── Settings ───────────────────────────────────────────────
@@ -114,6 +116,8 @@ export interface DockState {
   resetSettings: () => void;
   /** Move a widget to a different group. */
   moveWidget: (widgetId: string, targetGroupId: string) => void;
+  /** Toggle widget visibility. */
+  toggleWidget: (widgetId: string, hidden?: boolean) => void;
   /** Change options for a group (like collapsed state) */
   changeGroupState: (
     groupId: string,

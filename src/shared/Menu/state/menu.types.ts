@@ -61,4 +61,6 @@ export type MenuItem = {
   disabled?: boolean;
   /** Sort weight for the item. */
   weight?: number;
+  /** Whether the item is checked. */
+  checked?: boolean;
 };
