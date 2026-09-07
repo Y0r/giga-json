@@ -31,10 +31,15 @@ export const IDE = () => {
   useOverrideShortcuts();
 
   return (
-    <StableLayout className={IDE_SELECTORS.container}>
+    <StableLayout
+      className={IDE_SELECTORS.container}
+      display={"flex"}
+      flexDirection={"column"}
+    >
       <Layout
         className={IDE_SELECTORS.heading}
-        style={{ padding: "0 var(--gson-spacing-6)" }}
+        style={{ padding: "0 8px" }}
+        flexShrink={0}
       >
         <Flex alignItems={"center"} alignContent={"center"} gap={3} pb={1}>
           <Logo />
@@ -42,16 +47,17 @@ export const IDE = () => {
         </Flex>
       </Layout>
 
-      {/* @todo resolve problem with height. */}
-      <Dock components={DOCK_COMPONENTS}>
-        <div className={IDE_SELECTORS.content}>
-          {/* @todo add wrapper to allow orientation change. */}
-          <EditorTabs />
-          <Editor />
-        </div>
-      </Dock>
+      <Flex flex={1} minHeight={0} direction={"column"}>
+        <Dock components={DOCK_COMPONENTS}>
+          <div className={IDE_SELECTORS.content}>
+            {/* @todo add wrapper to allow orientation change. */}
+            <EditorTabs />
+            <Editor />
+          </div>
+        </Dock>
+      </Flex>
 
-      <Layout className={IDE_SELECTORS.footer}>
+      <Layout className={IDE_SELECTORS.footer} flexShrink={0}>
         {/* @todo display file path in footer. */}
         {/* @todo render goto-line widget */}
       </Layout>
