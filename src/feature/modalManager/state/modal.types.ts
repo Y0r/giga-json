@@ -2,6 +2,9 @@ export type ModalType = "RELOAD_CONFIRMATION" | "NAME_INPUT" | null;
 
 export interface ModalData {
   onSubmit?: (name: string) => void;
+  initialName?: string;
+  title?: string;
+  excludedFileId?: string;
   [key: string]: unknown;
 }
 
