@@ -118,6 +118,12 @@ export const Editor = (_props: EditorProps) => {
       // Skip if the model exists and dispose of it if a file was removed.
       Object.entries(files).forEach(([id, file]) => {
         if (nextModels[id]) {
+          // Model URIs are keyed by stable file IDs so renaming a workspace path
+          // does not dispose the model or lose its editor and undo state.
+          if (nextModels[id].getLanguageId() !== file.language) {
+            monaco.editor.setModelLanguage(nextModels[id], file.language);
+          }
+
           // If the model already exists, check if its content needs updating.
           // This ensures that external changes (e.g., from formatting) are reflected.
           if (file.hasBeenUpdated) {
@@ -143,7 +149,7 @@ export const Editor = (_props: EditorProps) => {
             }
           }
         } else {
-          const uri = monaco.Uri.parse(file.path);
+          const uri = monaco.Uri.parse(`inmemory://workspace/${id}`);
           let model = monaco.editor.getModel(uri);
 
           if (!model) {

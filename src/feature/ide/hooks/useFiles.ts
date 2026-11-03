@@ -3,6 +3,8 @@ import { useModalStore } from "@/feature/modalManager/state/modal.store";
 import { getFileInfo, getMimeType } from "@/feature/ide/utils/fileUtils";
 import { EditorFile } from "@/feature/ide/state/ide.types";
 import { config } from "@/config";
+import { normalizeFileName } from "@/feature/ide/services/fileNaming/FileNamingService";
+import { findFileNameCollision } from "@/feature/ide/services/fileManagement/FileManagementService";
 
 /**
  * Hook to manage file operations in the IDE.
@@ -22,6 +24,10 @@ export const useFiles = () => {
   const openTab = useEditorStore((state) => state.openTab);
   const openModal = useModalStore((state) => state.openModal);
   const reopenTab = useEditorStore((state) => state.reopenTab);
+  const updateFile = useEditorStore((state) => state.updateFile);
+  const flushPendingChanges = useEditorStore(
+    (state) => state.flushPendingChanges,
+  );
 
   /**
    * Retrieves a file by a given key and value.
@@ -60,6 +66,49 @@ export const useFiles = () => {
         };
 
         createFromProps(data);
+      },
+    });
+  }
+
+  /** Opens the shared filename dialog and renames the selected workspace file. */
+  function renameFile(fileId: string) {
+    const file = useEditorStore.getState().files[fileId];
+    if (
+      !file ||
+      file.id !== fileId ||
+      typeof file.name !== "string" ||
+      !file.name.trim()
+    ) {
+      return;
+    }
+
+    flushPendingChanges(fileId);
+    openModal("NAME_INPUT", {
+      initialName: file.name,
+      title: "Rename File",
+      excludedFileId: fileId,
+      onSubmit: (input: string) => {
+        const current = useEditorStore.getState().files[fileId];
+        const currentFiles = useEditorStore.getState().files;
+        const normalized = normalizeFileName(input, current?.name);
+        if (
+          !normalized ||
+          !current ||
+          current.id !== fileId ||
+          typeof current.name !== "string" ||
+          findFileNameCollision(currentFiles, normalized.name, fileId)
+        ) {
+          return;
+        }
+
+        if (normalized.name === current.name) return;
+
+        updateFile(fileId, {
+          name: normalized.name,
+          path: `file://${normalized.name}`,
+          type: normalized.type,
+          language: normalized.language,
+        });
       },
     });
   }
@@ -162,6 +211,7 @@ export const useFiles = () => {
   return {
     getFileBy,
     createEmptyFile,
+    renameFile,
     createFromFile,
     saveFileAs,
   };

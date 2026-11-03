@@ -13,29 +13,18 @@ import {
 export const ModalManager = () => {
   const { activeModal, modalData, closeModal } = useModalStore();
 
-  if (!activeModal) return null;
-
-  switch (activeModal) {
-    case "RELOAD_CONFIRMATION":
-      return (
-        <ReloadConfirmationModal
-          isOpen={true}
-          onClose={closeModal}
-          {...modalData}
-        />
-      );
-
-    case "NAME_INPUT":
-      return (
-        <NameInputModal
-          isOpen={true}
-          onClose={closeModal}
-          onSubmit={modalData?.onSubmit || (() => {})}
-          {...modalData}
-        />
-      );
-
-    default:
-      return null;
-  }
+  return (
+    <>
+      <ReloadConfirmationModal
+        isOpen={activeModal === "RELOAD_CONFIRMATION"}
+        onClose={closeModal}
+      />
+      <NameInputModal
+        isOpen={activeModal === "NAME_INPUT"}
+        onClose={closeModal}
+        onSubmit={modalData?.onSubmit || (() => {})}
+        {...modalData}
+      />
+    </>
+  );
 };

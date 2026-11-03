@@ -1,7 +1,9 @@
 import React from "react";
 import { VscGithub } from "react-icons/vsc";
 import { useTabs } from "@/feature/ide/hooks/useTabs";
+import { useFiles } from "@/feature/ide/hooks/useFiles";
 import { EditorFile } from "@/feature/ide/state/ide.types";
+import { useEditorStore } from "@/feature/ide/state/ide.store";
 import { Menu } from "@/shared/Menu/state/menu.types";
 
 interface TabsMenuSchemaProps {
@@ -22,6 +24,8 @@ export const useMenuSchema = (
     closeTabsToTheRight,
     reopenClosedTab,
   } = useTabs(focusedTabId);
+  const { renameFile } = useFiles();
+  const activeTabId = useEditorStore((state) => state.activeTabId);
 
   return {
     orientation: "vertical" as const,
@@ -81,7 +85,10 @@ export const useMenuSchema = (
         icon: null,
         action: {
           type: "callback" as const,
-          onClick: () => console.log("rename file"),
+          onClick: () => {
+            const targetId = focusedTabId ?? activeTabId;
+            if (targetId) renameFile(targetId);
+          },
         },
       },
       {
