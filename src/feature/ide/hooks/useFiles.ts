@@ -88,9 +88,9 @@ export const useFiles = () => {
       title: "Rename File",
       excludedFileId: fileId,
       onSubmit: (input: string) => {
-        const normalized = normalizeFileName(input);
         const current = useEditorStore.getState().files[fileId];
         const currentFiles = useEditorStore.getState().files;
+        const normalized = normalizeFileName(input, current?.name);
         if (
           !normalized ||
           !current ||

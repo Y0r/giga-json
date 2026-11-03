@@ -45,7 +45,10 @@ export const NameInputModal = ({
   }, [initialName, isOpen]);
 
   const handleSubmit = () => {
-    const normalized = normalizeFileName(value);
+    const normalized = normalizeFileName(
+      value,
+      excludedFileId ? initialName : undefined,
+    );
     if (!normalized) {
       setError("Name cannot be empty");
       return;

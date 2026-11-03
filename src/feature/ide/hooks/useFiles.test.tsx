@@ -75,6 +75,21 @@ describe("useFiles renameFile", () => {
     expect(persistedState.state.files.inactive.name).toBe("renamed.ts");
   });
 
+  it("preserves the current extension when rename input omits one", () => {
+    const { result } = renderHook(() => useFiles());
+    act(() => result.current.renameFile("inactive"));
+
+    const modalData = useModalStore.getState().modalData;
+    act(() => modalData?.onSubmit?.("renamed"));
+
+    expect(useEditorStore.getState().files.inactive).toMatchObject({
+      name: "renamed.json",
+      path: "file://renamed.json",
+      type: "json",
+      language: "json",
+    });
+  });
+
   it("does nothing when the requested file is missing", () => {
     const { result } = renderHook(() => useFiles());
 

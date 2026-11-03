@@ -54,6 +54,25 @@ describe("NameInputModal", () => {
     expect(onClose).toHaveBeenCalled();
   });
 
+  it("keeps the existing extension when submitting a rename without one", () => {
+    const onSubmit = vi.fn();
+    renderModal(
+      <NameInputModal
+        isOpen
+        initialName="one.json"
+        excludedFileId="current"
+        onSubmit={onSubmit}
+        onClose={vi.fn()}
+      />,
+    );
+
+    const input = screen.getByPlaceholderText("Enter file name...");
+    fireEvent.change(input, { target: { value: "renamed" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    expect(onSubmit).toHaveBeenCalledWith("renamed.json");
+  });
+
   it("rejects a collision with a closed workspace file", () => {
     const onSubmit = vi.fn();
     renderModal(
