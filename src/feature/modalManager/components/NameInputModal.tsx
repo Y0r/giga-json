@@ -45,17 +45,14 @@ export const NameInputModal = ({
   }, [initialName, isOpen]);
 
   const handleSubmit = () => {
-    const normalized = normalizeFileName(
-      value,
-      excludedFileId ? initialName : undefined,
-    );
+    const normalized = normalizeFileName(value, initialName || undefined);
     if (!normalized) {
       setError("Name cannot be empty");
       return;
     }
 
     if (
-      normalized.name !== initialName &&
+      !(excludedFileId && normalized.name === initialName) &&
       findFileNameCollision(files, normalized.name, excludedFileId)
     ) {
       setError(`A file with the name "${normalized.name}" already exists`);

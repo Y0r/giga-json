@@ -31,6 +31,14 @@ const invokeRenameAction = (items: MenuItem[]) => {
   item.action.onClick();
 };
 
+const invokeDuplicateAction = (items: MenuItem[]) => {
+  const item = items.find((entry) => entry.label === "Duplicate file...");
+  if (item?.action?.type !== "callback") {
+    throw new Error("Duplicate action is missing");
+  }
+  item.action.onClick();
+};
+
 describe("Tabs menu rename action", () => {
   beforeEach(() => {
     useEditorStore.setState({
@@ -64,6 +72,42 @@ describe("Tabs menu rename action", () => {
     expect(useModalStore.getState().modalData).toMatchObject({
       initialName: "active.json",
       excludedFileId: "active",
+    });
+  });
+});
+
+describe("Tabs menu duplicate action", () => {
+  beforeEach(() => {
+    useEditorStore.setState({
+      files: {
+        active: makeFile("active", "active.json"),
+        focused: makeFile("focused", "focused.json"),
+      },
+      activeTabId: "active",
+      activeFileIds: ["active", "focused"],
+      latestClosedFileIds: [],
+    });
+    useModalStore.setState({ activeModal: null, modalData: null });
+  });
+
+  it("duplicates the explicitly focused tab", () => {
+    const { result } = renderHook(() => useMenuSchema("focused"));
+
+    act(() => invokeDuplicateAction(result.current.items));
+
+    expect(useModalStore.getState().modalData).toMatchObject({
+      initialName: "focused-copy.json",
+      title: "Duplicate File",
+    });
+  });
+
+  it("duplicates the active file from Window → Editor Tabs", () => {
+    const { result } = renderHook(() => useMenuSchema());
+
+    act(() => invokeDuplicateAction(result.current.items));
+
+    expect(useModalStore.getState().modalData).toMatchObject({
+      initialName: "active-copy.json",
     });
   });
 });

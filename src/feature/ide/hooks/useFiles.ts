@@ -4,7 +4,10 @@ import { getFileInfo, getMimeType } from "@/feature/ide/utils/fileUtils";
 import { EditorFile } from "@/feature/ide/state/ide.types";
 import { config } from "@/config";
 import { normalizeFileName } from "@/feature/ide/services/fileNaming/FileNamingService";
-import { findFileNameCollision } from "@/feature/ide/services/fileManagement/FileManagementService";
+import {
+  findFileNameCollision,
+  suggestUniqueCopyName,
+} from "@/feature/ide/services/fileManagement/FileManagementService";
 
 /**
  * Hook to manage file operations in the IDE.
@@ -113,6 +116,69 @@ export const useFiles = () => {
     });
   }
 
+  /** Opens the shared naming dialog and creates an independent workspace copy. */
+  function duplicateFile(fileId: string) {
+    const source = useEditorStore.getState().files[fileId];
+    if (
+      !source ||
+      source.id !== fileId ||
+      typeof source.name !== "string" ||
+      !source.name.trim() ||
+      typeof source.content !== "string"
+    ) {
+      return;
+    }
+
+    const initialName = suggestUniqueCopyName(
+      useEditorStore.getState().files,
+      source.name,
+    );
+
+    openModal("NAME_INPUT", {
+      initialName,
+      title: "Duplicate File",
+      onSubmit: (input: string) => {
+        // Flush again on submit so edits made while the dialog was open are copied.
+        flushPendingChanges(fileId);
+        const currentState = useEditorStore.getState();
+        const current = currentState.files[fileId];
+        const normalized = normalizeFileName(input, current?.name);
+        if (
+          !current ||
+          current.id !== fileId ||
+          typeof current.name !== "string" ||
+          !current.name.trim() ||
+          typeof current.content !== "string" ||
+          !normalized ||
+          findFileNameCollision(currentState.files, normalized.name)
+        ) {
+          return;
+        }
+
+        const { name, type, language } = normalized;
+        createFromProps(
+          {
+            ...current,
+            name,
+            path: `file://${name}`,
+            type,
+            language,
+            lastModified: Date.now(),
+            content: current.content,
+            cursor: null,
+            cursorOffset: 0,
+            viewState: undefined,
+            isClosed: false,
+            hasBeenUpdated: false,
+            hasUnsavedChanges: false,
+            hasUnformattedChanges: false,
+          },
+          true,
+        );
+      },
+    });
+  }
+
   /**
    * Opens a native file picker to select a file from the local file system.
    *
@@ -170,15 +236,18 @@ export const useFiles = () => {
    *
    * @param props - The initial properties for the file.
    */
-  function createFromProps(props: Omit<EditorFile, "id">) {
+  function createFromProps(
+    props: Omit<EditorFile, "id">,
+    preserveContent = false,
+  ) {
     // Sets props as file content if debugFileCreation is enabled.
-    if (config.debugFileCreation) {
+    if (config.debugFileCreation && !preserveContent) {
       props.content = JSON.stringify(props, null, 2);
     }
 
     const fileProps: EditorFile = {
-      id: crypto.randomUUID(),
       ...props,
+      id: crypto.randomUUID(),
     };
 
     // Add the file to the editor state and open its tab.
@@ -212,6 +281,7 @@ export const useFiles = () => {
     getFileBy,
     createEmptyFile,
     renameFile,
+    duplicateFile,
     createFromFile,
     saveFileAs,
   };
