@@ -24,7 +24,7 @@ export const useMenuSchema = (
     closeTabsToTheRight,
     reopenClosedTab,
   } = useTabs(focusedTabId);
-  const { renameFile } = useFiles();
+  const { renameFile, duplicateFile } = useFiles();
   const activeTabId = useEditorStore((state) => state.activeTabId);
 
   return {
@@ -71,6 +71,17 @@ export const useMenuSchema = (
         },
       },
       { type: "separator" as const },
+      {
+        label: "Duplicate file...",
+        icon: null,
+        action: {
+          type: "callback" as const,
+          onClick: () => {
+            const targetId = focusedTabId ?? activeTabId;
+            if (targetId) duplicateFile(targetId);
+          },
+        },
+      },
       {
         label: "Reopen Closed Tab",
         icon: null,
